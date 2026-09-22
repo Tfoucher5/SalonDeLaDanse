@@ -70,6 +70,18 @@ class User extends Authenticatable
     }
 
     /**
+     * L equipe organisatrice a-t-elle attribue un creneau a ce benevole ?
+     *
+     * Une attribution manuelle verrouille le planning : le benevole ne peut plus
+     * defaire ce que l organisation a pose, en particulier un poste sensible.
+     * Le resultat est memoise, la grille pose la question pour chaque creneau.
+     */
+    public function planningIsLockedByAdmin(): bool
+    {
+        return once(fn (): bool => $this->assignments()->where('assigned_by_admin', true)->exists());
+    }
+
+    /**
      * Le profil est verrouille des la creation du compte : seul un administrateur
      * peut encore modifier nom, prenom, e-mail et photo.
      */

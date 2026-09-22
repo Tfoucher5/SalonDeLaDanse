@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Enums\PlanningState;
 use App\Models\Edition;
 use App\Models\Shift;
+use App\Models\User;
+use App\Services\PlanningRules;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -12,11 +14,12 @@ use Illuminate\Support\Collection;
 
 class PlanningController extends Controller
 {
+    public function __construct(private readonly PlanningRules $rules) {}
+
     /**
      * La grille des créneaux, jour par jour.
      *
-     * Lecture seule : aucune réservation n'est possible depuis cet écran. La
-     * confidentialité tient à la requête elle-même, qui ne compte que les
+     * La confidentialité tient à la requête elle-même, qui ne compte que les
      * réservations et ne charge jamais les bénévoles d'un créneau.
      */
     public function __invoke(Request $request): View
@@ -28,17 +31,19 @@ class PlanningController extends Controller
         $days = $edition?->days() ?? collect();
         $selectedDay = $this->selectedDay($days, $request->query('day'));
 
+        $shiftsByTimeSlot = $edition === null || $selectedDay === null
+            ? collect()
+            : $this->shiftsOfDay($edition, $selectedDay);
+
         return view('planning.index', [
             'edition' => $edition,
             'state' => $state,
-            'blockingReason' => $state->blockingReason(),
             'days' => $days,
             'selectedDay' => $selectedDay,
             'timeSlots' => $edition?->timeSlots()->get() ?? collect(),
-            'shiftsByTimeSlot' => $edition === null || $selectedDay === null
-                ? collect()
-                : $this->shiftsOfDay($edition, $selectedDay),
+            'shiftsByTimeSlot' => $shiftsByTimeSlot,
             'bookedShiftIds' => $user->assignments()->pluck('shift_id'),
+            'motives' => $this->motives($user, $shiftsByTimeSlot),
         ]);
     }
 
@@ -75,10 +80,34 @@ class PlanningController extends Controller
         return $edition->shifts()
             ->onPublicMissions()
             ->where('date', $day->toDateString())
-            ->with(['mission:id,name,position', 'timeSlot:id,starts_at,ends_at,position'])
+            ->with(['mission:id,name,position,is_public', 'timeSlot:id,starts_at,ends_at,position'])
             ->withCount('assignments')
             ->get()
             ->sortBy(fn (Shift $shift): int => $shift->mission->position)
             ->groupBy('time_slot_id');
+    }
+
+    /**
+     * Le motif de blocage de chaque créneau affiché, indexé par identifiant.
+     *
+     * Les créneaux déjà retenus sont chargés une seule fois pour toute la
+     * grille : c'est ce qui évite une requête par carte.
+     *
+     * @param  Collection<int, Collection<int, Shift>>  $shiftsByTimeSlot
+     * @return array<int, string|null>
+     */
+    private function motives(User $user, Collection $shiftsByTimeSlot): array
+    {
+        $bookedShifts = $this->rules->bookedShifts($user);
+        $edition = $user->activeEdition();
+        $motives = [];
+
+        foreach ($shiftsByTimeSlot->flatten() as $shift) {
+            $motives[$shift->id] = $this->rules
+                ->violationFor($user, $shift, $bookedShifts)
+                ?->message($edition);
+        }
+
+        return $motives;
     }
 }

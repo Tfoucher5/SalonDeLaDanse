@@ -122,6 +122,35 @@ it('marque les creneaux deja retenus par le benevole', function () {
         ->assertSee('1 créneau');
 });
 
+it('propose la reservation tant que le planning est modifiable', function () {
+    ['edition' => $edition] = grid();
+
+    $this->actingAs(User::factory()->forEdition($edition)->create())
+        ->get('/planning')
+        ->assertSee('Réserver');
+});
+
+it('propose le retrait d un creneau deja retenu', function () {
+    ['edition' => $edition, 'shift' => $shift] = grid();
+
+    $user = User::factory()->forEdition($edition)->create();
+    Assignment::factory()->create(['user_id' => $user->id, 'shift_id' => $shift->id]);
+
+    $this->actingAs($user)
+        ->get('/planning')
+        ->assertSee('Retirer ce créneau');
+});
+
+it('ne propose aucune action quand les inscriptions sont fermees', function () {
+    ['edition' => $edition] = grid();
+    $edition->update(['is_locked' => true]);
+
+    $this->actingAs(User::factory()->forEdition($edition)->create())
+        ->get('/planning')
+        ->assertDontSee('Réserver')
+        ->assertDontSee('Retirer ce créneau');
+});
+
 it('navigue d un jour a l autre du Salon', function () {
     ['edition' => $edition, 'slot' => $slot] = grid();
 
@@ -199,6 +228,19 @@ it('affiche le motif de blocage quand le planning est deja valide', function () 
     $this->actingAs(User::factory()->forEdition($edition)->validatedPlanning()->create())
         ->get('/planning')
         ->assertSee('Votre planning est validé définitivement.');
+});
+
+it('annonce un planning verrouille par l equipe organisatrice', function () {
+    ['edition' => $edition, 'shift' => $shift] = grid();
+
+    $user = User::factory()->forEdition($edition)->create();
+    Assignment::factory()->forcedByAdmin()->create(['user_id' => $user->id, 'shift_id' => $shift->id]);
+
+    $this->actingAs($user)
+        ->get('/planning')
+        ->assertSee('Verrouillé')
+        ->assertDontSee('Réserver')
+        ->assertDontSee('Retirer ce créneau');
 });
 
 it('reste consultable sans aucune edition en base', function () {

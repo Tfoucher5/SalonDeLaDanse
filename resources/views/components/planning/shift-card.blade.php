@@ -7,20 +7,21 @@
     toutes lettres, la couleur ne fait que confirmer. Quand une règle empêche la
     réservation, le motif est affiché en clair : « indisponible » n'apprend rien
     au bénévole.
+
+    Alpine ne sert qu'au retour visuel pendant l'aller-retour serveur : le bouton
+    se désactive et s'annonce, l'état réel revient avec la page rechargée.
 --}}
 
 @props([
     'shift',
     'booked' => false,
-    'reason' => null,
+    'motive' => null,
+    'editable' => false,
 ])
 
 @php
     $gauge = GaugeLevel::for($shift);
-    $isFull = $gauge === GaugeLevel::Full;
-
-    $motive = $booked ? null : ($isFull ? 'Toutes les places de ce créneau sont prises.' : $reason);
-    $isBlocked = ! $booked && ($isFull || $reason !== null);
+    $isBlocked = ! $booked && $motive !== null;
 
     $surface = match (true) {
         $booked => 'border-primary bg-primary-soft',
@@ -58,7 +59,40 @@
         {{ $gauge->label($shift->remaining_places) }}
     </p>
 
-    @if ($motive)
+    @if ($isBlocked)
         <p class="mt-2 text-sm text-zinc-500">{{ $motive }}</p>
+    @endif
+
+    @if ($editable && $booked)
+        <form method="POST"
+              action="{{ route('planning.shifts.destroy', $shift) }}"
+              x-data="{ pending: false }"
+              @submit="pending = true"
+              class="mt-3">
+            @csrf
+            @method('DELETE')
+
+            <button type="submit"
+                    x-bind:disabled="pending"
+                    class="flex h-11 w-full items-center justify-center rounded-md border border-zinc-200 bg-white px-4 font-medium text-danger hover:bg-zinc-100 disabled:opacity-50">
+                <span x-show="! pending">Retirer ce créneau</span>
+                <span x-show="pending" x-cloak>Enregistrement…</span>
+            </button>
+        </form>
+    @elseif ($editable && ! $isBlocked)
+        <form method="POST"
+              action="{{ route('planning.shifts.store', $shift) }}"
+              x-data="{ pending: false }"
+              @submit="pending = true"
+              class="mt-3">
+            @csrf
+
+            <button type="submit"
+                    x-bind:disabled="pending"
+                    class="flex h-11 w-full items-center justify-center rounded-md border border-zinc-200 bg-white px-4 font-medium text-zinc-900 hover:bg-zinc-100 disabled:opacity-50">
+                <span x-show="! pending">Réserver</span>
+                <span x-show="pending" x-cloak>Enregistrement…</span>
+            </button>
+        </form>
     @endif
 </article>

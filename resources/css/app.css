@@ -3,6 +3,12 @@
 @tailwind utilities;
 
 @layer base {
+    /* Alpine n a pas encore demarre : masquer ce qu il devait masquer, sinon
+       les deux etats d un bouton clignotent au chargement. */
+    [x-cloak] {
+        display: none !important;
+    }
+
     /* Chiffres tabulaires sur les grilles et les tableaux : sans cela les horaires
        et les compteurs de places dansent d'une ligne a l'autre. */
     table,

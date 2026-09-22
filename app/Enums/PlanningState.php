@@ -8,23 +8,30 @@ use App\Models\User;
 /**
  * État du planning d'un bénévole, tel qu'affiché sur son dashboard.
  *
- * Les trois cas du cahier des charges : brouillon modifiable, validé
- * définitivement, ou consultation seule parce que la fenêtre est fermée.
+ * Brouillon modifiable, validé définitivement, verrouillé par l'équipe
+ * organisatrice, ou consultation seule parce que la fenêtre est fermée. Seul
+ * le brouillon se modifie.
  */
 enum PlanningState: string
 {
     case Draft = 'draft';
     case Validated = 'validated';
+    case Locked = 'locked';
     case Closed = 'closed';
 
     /**
      * Un planning déjà validé le reste, fenêtre ouverte ou non : c'est
-     * l'information la plus utile au bénévole.
+     * l'information la plus utile au bénévole. Une attribution par l'équipe
+     * organisatrice verrouille de la même façon, sans passer par le bénévole.
      */
     public static function for(User $user, ?Edition $edition): self
     {
         if ($user->planningIsValidated()) {
             return self::Validated;
+        }
+
+        if ($user->planningIsLockedByAdmin()) {
+            return self::Locked;
         }
 
         if ($edition === null || ! $edition->registrationIsOpen()) {
@@ -50,6 +57,7 @@ enum PlanningState: string
         return match ($this) {
             self::Draft => 'Brouillon',
             self::Validated => 'Validé',
+            self::Locked => 'Verrouillé',
             self::Closed => 'Inscriptions fermées',
         };
     }
@@ -62,20 +70,8 @@ enum PlanningState: string
         return match ($this) {
             self::Draft => 'Vous pouvez encore ajouter ou retirer des créneaux. Pensez à valider définitivement votre planning une fois vos choix arrêtés.',
             self::Validated => 'Votre planning est validé et verrouillé. Contactez l\'équipe organisatrice pour toute modification.',
+            self::Locked => "L'équipe organisatrice vous a attribué un poste : votre planning est verrouillé. Contactez-la pour toute modification.",
             self::Closed => 'La composition des plannings est fermée. Le planning reste consultable, mais plus modifiable.',
-        };
-    }
-
-    /**
-     * Motif court expliquant, sur la grille, pourquoi aucun créneau n'est
-     * réservable. Null quand le planning est encore modifiable.
-     */
-    public function blockingReason(): ?string
-    {
-        return match ($this) {
-            self::Draft => null,
-            self::Validated => 'Votre planning est validé définitivement.',
-            self::Closed => 'Les inscriptions au planning sont fermées.',
         };
     }
 }

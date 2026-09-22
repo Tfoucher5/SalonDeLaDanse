@@ -20,6 +20,20 @@
                     </p>
                 </section>
             @else
+                {{-- L'issue de la dernière action, avant tout le reste : une règle
+                     qui refuse doit se lire sans chercher. --}}
+                @if (session('status'))
+                    <p role="status" class="rounded-md border border-primary bg-primary-soft p-4 text-sm text-zinc-900">
+                        {{ session('status') }}
+                    </p>
+                @endif
+
+                @error('shift')
+                    <p role="alert" class="rounded-md border border-danger bg-white p-4 text-sm text-danger">
+                        {{ $message }}
+                    </p>
+                @enderror
+
                 {{-- Ce que le bénévole a déjà retenu, tous jours confondus. --}}
                 <section class="bg-white border border-zinc-200 rounded-lg p-6 tabular-grid">
                     <h3 class="text-lg font-semibold text-zinc-900">Mes créneaux</h3>
@@ -29,7 +43,7 @@
                         sur {{ $edition->max_slots_per_volunteer }} possibles.
                     </p>
 
-                    @if ($blockingReason)
+                    @if (! $state->isEditable())
                         <p class="mt-4 flex items-start gap-2 rounded-md bg-zinc-100 p-4 text-sm text-zinc-500">
                             <span aria-hidden="true">&#9432;</span>
                             <span>{{ $state->description() }}</span>
@@ -68,7 +82,8 @@
                                     <x-planning.shift-card
                                         :shift="$shift"
                                         :booked="$bookedShiftIds->contains($shift->id)"
-                                        :reason="$blockingReason" />
+                                        :motive="$motives[$shift->id] ?? null"
+                                        :editable="$state->isEditable()" />
                                 @endforeach
                             </div>
                         @endif
