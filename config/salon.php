@@ -33,6 +33,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Equipe organisatrice
+    |--------------------------------------------------------------------------
+    |
+    | Coordonnees affichees sur le dashboard benevole. Elles vivent dans .env
+    | pour rester modifiables d une edition a l autre sans toucher au code ;
+    | une valeur absente est simplement masquee a l ecran.
+    |
+    */
+
+    'contact' => [
+        'name' => env('SALON_CONTACT_NAME'),
+        'email' => env('SALON_CONTACT_EMAIL'),
+        'phone' => env('SALON_CONTACT_PHONE'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Photo du benevole
     |--------------------------------------------------------------------------
     |
@@ -44,6 +61,21 @@ return [
         'directory' => 'volunteers/photos',
         'max_kilobytes' => (int) env('SALON_PHOTO_MAX_KILOBYTES', 4096),
         'mimes' => ['jpeg', 'jpg', 'png', 'webp'],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Jauges de remplissage
+    |--------------------------------------------------------------------------
+    |
+    | Part des places encore libres en dessous de laquelle un creneau passe en
+    | ambre : « presque complet ». Avec une jauge de 4 places, 0,25 bascule le
+    | creneau quand il n en reste plus qu une.
+    |
+    */
+
+    'gauge' => [
+        'tight_ratio' => (float) env('SALON_GAUGE_TIGHT_RATIO', 0.25),
     ],
 
     'seed' => [

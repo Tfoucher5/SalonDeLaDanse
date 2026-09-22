@@ -78,6 +78,17 @@ class User extends Authenticatable
         return $this->profile_locked_at !== null;
     }
 
+    /**
+     * L edition de rattachement du benevole.
+     *
+     * Les comptes crees avant le rattachement, et les comptes administrateurs,
+     * n ont pas d edition propre : on retombe alors sur l edition courante.
+     */
+    public function activeEdition(): ?Edition
+    {
+        return $this->edition ?? Edition::current();
+    }
+
     /** @return BelongsTo<Edition, $this> */
     public function edition(): BelongsTo
     {
