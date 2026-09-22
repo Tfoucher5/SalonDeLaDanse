@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Exceptions\InvitationCodeUnavailableException;
 use App\Http\Controllers\Controller;
-use App\Models\User;
+use App\Http\Middleware\RequireValidatedInvitationCode;
+use App\Http\Requests\Auth\RegisterRequest;
+use App\Services\VolunteerRegistrar;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
@@ -18,29 +18,35 @@ class RegisteredUserController extends Controller
     /**
      * Display the registration view.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
-        return view('auth.register');
+        return view('auth.register', [
+            'code' => $request->session()->get(RequireValidatedInvitationCode::SESSION_KEY),
+        ]);
     }
 
     /**
      * Handle an incoming registration request.
-     *
-     * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(RegisterRequest $request, VolunteerRegistrar $registrar): RedirectResponse
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $code = (string) $request->session()->get(RequireValidatedInvitationCode::SESSION_KEY);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+        try {
+            $user = $registrar->register(
+                $code,
+                $request->safe()->only(['first_name', 'last_name', 'email', 'phone', 'password']),
+                $request->file('photo'),
+            );
+        } catch (InvitationCodeUnavailableException $exception) {
+            // Le code a ete consomme entre l affichage du formulaire et l envoi.
+            $request->session()->forget(RequireValidatedInvitationCode::SESSION_KEY);
+
+            return redirect()->route('register.code')
+                ->withErrors(['code' => $exception->getMessage()]);
+        }
+
+        $request->session()->forget(RequireValidatedInvitationCode::SESSION_KEY);
 
         event(new Registered($user));
 

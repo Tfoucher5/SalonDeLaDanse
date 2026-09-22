@@ -4,18 +4,29 @@ use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\ConfirmablePasswordController;
 use App\Http\Controllers\Auth\EmailVerificationNotificationController;
 use App\Http\Controllers\Auth\EmailVerificationPromptController;
+use App\Http\Controllers\Auth\InvitationCodeController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Middleware\RequireValidatedInvitationCode;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
+    // L inscription est fermee par defaut : sans code d invitation valide et non
+    // consomme, aucun compte ne peut etre cree.
+    Route::get('register/code', [InvitationCodeController::class, 'create'])
+        ->name('register.code');
+
+    Route::post('register/code', [InvitationCodeController::class, 'store']);
+
     Route::get('register', [RegisteredUserController::class, 'create'])
+        ->middleware(RequireValidatedInvitationCode::class)
         ->name('register');
 
-    Route::post('register', [RegisteredUserController::class, 'store']);
+    Route::post('register', [RegisteredUserController::class, 'store'])
+        ->middleware(RequireValidatedInvitationCode::class);
 
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');

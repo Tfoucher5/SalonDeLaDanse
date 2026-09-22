@@ -2,84 +2,100 @@
 
 use App\Models\User;
 
-test('profile page is displayed', function () {
-    $user = User::factory()->create();
-
-    $response = $this
-        ->actingAs($user)
-        ->get('/profile');
-
-    $response->assertOk();
+it('affiche la page profil', function () {
+    $this->actingAs(User::factory()->create())
+        ->get('/profile')
+        ->assertOk();
 });
 
-test('profile information can be updated', function () {
-    $user = User::factory()->create();
+it('reduit la page profil au mot de passe pour un profil verrouille', function () {
+    $response = $this->actingAs(User::factory()->create())->get('/profile');
 
-    $response = $this
-        ->actingAs($user)
+    $response->assertOk()
+        ->assertSee('name="current_password"', escape: false)
+        ->assertDontSee('name="first_name"', escape: false)
+        ->assertDontSee('name="email"', escape: false);
+});
+
+it('refuse toute modification des informations personnelles sur un profil verrouille', function () {
+    $user = User::factory()->create([
+        'first_name' => 'Marie',
+        'email' => 'marie@example.test',
+    ]);
+
+    $this->actingAs($user)
         ->patch('/profile', [
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+            'first_name' => 'Pirate',
+            'last_name' => 'Durand',
+            'email' => 'pirate@example.test',
+            'phone' => '0612345678',
+        ])
+        ->assertForbidden();
 
-    $response
+    $user->refresh();
+
+    expect($user->first_name)->toBe('Marie')
+        ->and($user->email)->toBe('marie@example.test');
+});
+
+it('laisse un profil non verrouille modifier ses informations', function () {
+    $user = User::factory()->create(['profile_locked_at' => null]);
+
+    $this->actingAs($user)
+        ->patch('/profile', [
+            'first_name' => 'Marie',
+            'last_name' => 'Durand',
+            'email' => 'marie.durand@example.test',
+            'phone' => '06 12 34 56 78',
+        ])
         ->assertSessionHasNoErrors()
         ->assertRedirect('/profile');
 
     $user->refresh();
 
-    $this->assertSame('Test User', $user->name);
-    $this->assertSame('test@example.com', $user->email);
-    $this->assertNull($user->email_verified_at);
+    expect($user->full_name)->toBe('Marie Durand')
+        ->and($user->email)->toBe('marie.durand@example.test')
+        ->and($user->email_verified_at)->toBeNull();
 });
 
-test('email verification status is unchanged when the email address is unchanged', function () {
-    $user = User::factory()->create();
+it('laisse un administrateur modifier ses informations malgre le verrou', function () {
+    $admin = User::factory()->admin()->create();
 
-    $response = $this
-        ->actingAs($user)
+    $this->actingAs($admin)
         ->patch('/profile', [
-            'name' => 'Test User',
+            'first_name' => 'Claire',
+            'last_name' => 'Martin',
+            'email' => 'claire.martin@example.test',
+            'phone' => '0612345678',
+        ])
+        ->assertSessionHasNoErrors()
+        ->assertRedirect('/profile');
+
+    expect($admin->refresh()->full_name)->toBe('Claire Martin');
+});
+
+it('ne change pas le statut de verification quand l e-mail est inchange', function () {
+    $user = User::factory()->create(['profile_locked_at' => null]);
+
+    $this->actingAs($user)
+        ->patch('/profile', [
+            'first_name' => 'Marie',
+            'last_name' => 'Durand',
             'email' => $user->email,
-        ]);
+            'phone' => '0612345678',
+        ])
+        ->assertSessionHasNoErrors();
 
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect('/profile');
-
-    $this->assertNotNull($user->refresh()->email_verified_at);
+    expect($user->refresh()->email_verified_at)->not->toBeNull();
 });
 
-test('user can delete their account', function () {
+it('ne propose plus au benevole de supprimer son compte', function () {
     $user = User::factory()->create();
 
-    $response = $this
-        ->actingAs($user)
-        ->delete('/profile', [
-            'password' => 'password',
-        ]);
+    $this->actingAs($user)->get('/profile')->assertDontSee('profile.destroy');
 
-    $response
-        ->assertSessionHasNoErrors()
-        ->assertRedirect('/');
+    $this->actingAs($user)->delete('/profile', ['password' => 'password'])
+        ->assertStatus(405);
 
-    $this->assertGuest();
-    $this->assertNull($user->fresh());
-});
-
-test('correct password must be provided to delete account', function () {
-    $user = User::factory()->create();
-
-    $response = $this
-        ->actingAs($user)
-        ->from('/profile')
-        ->delete('/profile', [
-            'password' => 'wrong-password',
-        ]);
-
-    $response
-        ->assertSessionHasErrorsIn('userDeletion', 'password')
-        ->assertRedirect('/profile');
-
-    $this->assertNotNull($user->fresh());
+    expect($user->fresh())->not->toBeNull();
 });

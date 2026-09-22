@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 /*
@@ -44,7 +45,26 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+/**
+ * Une photo de test, valide aux yeux de la regle image.
+ *
+ * On n utilise pas UploadedFile::fake()->image() : cette fabrique exige
+ * l extension GD, absente de certaines installations PHP et de la CI. Un PNG
+ * 1x1 encode en dur rend le meme service sans dependance.
+ *
+ * @param  int  $paddingKilobytes  Octets de remplissage, pour tester la regle de poids.
+ */
+function fakePhoto(string $name = 'portrait.png', int $paddingKilobytes = 0): UploadedFile
 {
-    // ..
+    $png = base64_decode(
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
+    );
+
+    if ($paddingKilobytes > 0) {
+        // Les octets ajoutes apres le marqueur de fin sont ignores par les
+        // decodeurs PNG : le fichier reste une image, il pese seulement plus lourd.
+        $png .= str_repeat("\0", $paddingKilobytes * 1024);
+    }
+
+    return UploadedFile::fake()->createWithContent($name, $png);
 }
