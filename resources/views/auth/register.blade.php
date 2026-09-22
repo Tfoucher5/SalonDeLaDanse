@@ -39,6 +39,13 @@
             <x-input-error :messages="$errors->get('phone')" class="mt-2" />
         </div>
 
+        <!-- Birth date -->
+        <div class="mt-4">
+            <x-input-label for="birth_date" :value="__('Date of birth')" />
+            <x-text-input id="birth_date" class="block mt-1 w-full" type="date" name="birth_date" :value="old('birth_date')" required autocomplete="bday" max="{{ today()->toDateString() }}" />
+            <x-input-error :messages="$errors->get('birth_date')" class="mt-2" />
+        </div>
+
         <!-- Photo -->
         <div class="mt-4">
             <x-input-label for="photo" :value="__('Recent photo')" />
@@ -75,7 +82,7 @@
         </div>
 
         <p class="mt-6 text-sm text-zinc-500">
-            {{ __('Once your account is created, only an administrator can change your name, email address or photo.') }}
+            {{ __('Once your account is created, only an administrator can change your name, date of birth, email address or photo.') }}
         </p>
 
         <div class="flex items-center justify-end gap-4 mt-4">

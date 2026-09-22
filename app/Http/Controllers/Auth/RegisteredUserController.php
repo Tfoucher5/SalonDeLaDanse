@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
         try {
             $user = $registrar->register(
                 $code,
-                $request->safe()->only(['first_name', 'last_name', 'email', 'phone', 'password']),
+                $request->safe()->only(['first_name', 'last_name', 'email', 'phone', 'birth_date', 'password']),
                 $request->file('photo'),
             );
         } catch (InvitationCodeUnavailableException $exception) {

@@ -36,6 +36,7 @@ class ProfileUpdateRequest extends FormRequest
                 Rule::unique(User::class)->ignore($this->user()->id),
             ],
             'phone' => ['required', 'string', 'max:30', 'regex:/^[0-9 .+()-]{6,30}$/'],
+            'birth_date' => ['required', 'date', 'after:1900-01-01', 'before:today'],
         ];
     }
 
@@ -56,6 +57,7 @@ class ProfileUpdateRequest extends FormRequest
             'last_name' => 'nom',
             'email' => 'adresse e-mail',
             'phone' => 'téléphone',
+            'birth_date' => 'date de naissance',
         ];
     }
 }

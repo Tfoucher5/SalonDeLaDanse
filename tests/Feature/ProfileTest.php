@@ -29,6 +29,7 @@ it('refuse toute modification des informations personnelles sur un profil verrou
             'last_name' => 'Durand',
             'email' => 'pirate@example.test',
             'phone' => '0612345678',
+            'birth_date' => '1990-05-14',
         ])
         ->assertForbidden();
 
@@ -47,6 +48,7 @@ it('laisse un profil non verrouille modifier ses informations', function () {
             'last_name' => 'Durand',
             'email' => 'marie.durand@example.test',
             'phone' => '06 12 34 56 78',
+            'birth_date' => '1990-05-14',
         ])
         ->assertSessionHasNoErrors()
         ->assertRedirect('/profile');
@@ -67,6 +69,7 @@ it('laisse un administrateur modifier ses informations malgre le verrou', functi
             'last_name' => 'Martin',
             'email' => 'claire.martin@example.test',
             'phone' => '0612345678',
+            'birth_date' => '1990-05-14',
         ])
         ->assertSessionHasNoErrors()
         ->assertRedirect('/profile');
@@ -83,6 +86,7 @@ it('ne change pas le statut de verification quand l e-mail est inchange', functi
             'last_name' => 'Durand',
             'email' => $user->email,
             'phone' => '0612345678',
+            'birth_date' => '1990-05-14',
         ])
         ->assertSessionHasNoErrors();
 

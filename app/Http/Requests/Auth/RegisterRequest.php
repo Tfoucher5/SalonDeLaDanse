@@ -20,6 +20,7 @@ class RegisterRequest extends FormRequest
             'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', Rule::unique(User::class)],
             'phone' => ['required', 'string', 'max:30', 'regex:/^[0-9 .+()-]{6,30}$/'],
+            'birth_date' => ['required', 'date', 'after:1900-01-01', 'before:today'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'photo' => [
                 'required',
@@ -47,6 +48,7 @@ class RegisterRequest extends FormRequest
             'last_name' => 'nom',
             'email' => 'adresse e-mail',
             'phone' => 'téléphone',
+            'birth_date' => 'date de naissance',
             'password' => 'mot de passe',
             'photo' => 'photo',
         ];
@@ -59,6 +61,7 @@ class RegisterRequest extends FormRequest
     {
         return [
             'phone.regex' => 'Le téléphone ne doit contenir que des chiffres, des espaces et les signes + . ( ) -.',
+            'birth_date.before' => "La date de naissance doit être antérieure à aujourd'hui.",
             'photo.required' => 'Une photo récente est obligatoire.',
             'photo.image' => 'La photo doit être une image.',
             'photo.mimes' => 'La photo doit être au format JPEG, PNG ou WebP.',

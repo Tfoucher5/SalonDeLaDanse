@@ -31,6 +31,13 @@
         </div>
 
         <div class="flex items-start justify-between gap-4 py-3">
+            <dt class="text-sm text-zinc-500">{{ __('Date of birth') }}</dt>
+            <dd class="text-sm text-zinc-900 tabular-grid">
+                {{ $user->birth_date?->translatedFormat('d/m/Y') ?? __('None') }}
+            </dd>
+        </div>
+
+        <div class="flex items-start justify-between gap-4 py-3">
             <dt class="text-sm text-zinc-500">{{ __('Recent photo') }}</dt>
             <dd>
                 @if ($user->photo_path)

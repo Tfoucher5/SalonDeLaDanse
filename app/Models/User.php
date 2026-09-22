@@ -20,7 +20,7 @@ use Illuminate\Notifications\Notifiable;
 
 // `role`, `edition_id`, `profile_locked_at` et `planning_validated_at` sont
 // volontairement hors du fillable : ils ne doivent jamais venir d une requete.
-#[Fillable(['first_name', 'last_name', 'email', 'phone', 'password', 'photo_path'])]
+#[Fillable(['first_name', 'last_name', 'email', 'phone', 'birth_date', 'password', 'photo_path'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -36,6 +36,7 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'birth_date' => 'date',
             'password' => 'hashed',
             'role' => UserRole::class,
             'profile_locked_at' => 'datetime',

@@ -21,7 +21,7 @@ use Throwable;
 class VolunteerRegistrar
 {
     /**
-     * @param  array{first_name: string, last_name: string, email: string, phone: string, password: string}  $attributes
+     * @param  array{first_name: string, last_name: string, email: string, phone: string, birth_date: string, password: string}  $attributes
      *
      * @throws InvitationCodeUnavailableException
      */
