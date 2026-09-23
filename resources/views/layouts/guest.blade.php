@@ -34,7 +34,8 @@
             </main>
 
             <footer class="shrink-0 text-center text-xs text-zinc-500">
-                © {{ now()->year }} {{ config('app.name') }} · Espace bénévoles
+                © {{ now()->year }} {{ config('app.name') }} · Espace bénévoles ·
+                <a href="{{ route('legal.notice') }}" class="font-semibold transition hover:text-primary">Mentions légales</a>
             </footer>
         </div>
     </body>

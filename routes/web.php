@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignSystemController;
+use App\Http\Controllers\LegalNoticeController;
 use App\Http\Controllers\PlanningController;
 use App\Http\Controllers\PlanningSummaryController;
 use App\Http\Controllers\ProfileController;
@@ -11,6 +12,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/mentions-legales', LegalNoticeController::class)->name('legal.notice');
 
 Route::get('/dashboard', DashboardController::class)
     ->middleware(['auth', 'verified'])

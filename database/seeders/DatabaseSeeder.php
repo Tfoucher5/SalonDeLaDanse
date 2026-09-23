@@ -34,5 +34,11 @@ class DatabaseSeeder extends Seeder
                 'edition_id' => Edition::current()?->id,
             ]);
         }
+
+        // Benevoles fictifs et leurs plannings : en local seulement, jamais en
+        // test (les comptages de reference resteraient faux) ni en production.
+        if (app()->environment('local')) {
+            $this->call(VolunteerSeeder::class);
+        }
     }
 }

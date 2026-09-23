@@ -66,7 +66,10 @@
     <div class="border-t border-zinc-900/5">
         <x-ui.container :size="$width" class="flex flex-col gap-1 py-5 text-xs text-zinc-500 sm:flex-row sm:items-center sm:justify-between">
             <p>© {{ now()->year }} {{ config('app.name') }}</p>
-            <p>Espace réservé aux bénévoles invités par l'équipe organisatrice.</p>
+            <p>
+                Espace réservé aux bénévoles invités par l'équipe organisatrice ·
+                <a href="{{ route('legal.notice') }}" class="inline-flex min-h-[2rem] items-center font-semibold transition hover:text-primary">Mentions légales</a>
+            </p>
         </x-ui.container>
     </div>
 </footer>
