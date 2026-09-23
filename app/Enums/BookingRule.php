@@ -5,11 +5,13 @@ namespace App\Enums;
 use App\Models\Edition;
 
 /**
- * Les règles qui peuvent interdire un créneau à un bénévole.
+ * Les règles qui peuvent refuser une écriture du planning.
  *
- * Chaque cas porte son propre message : une règle qui bloque doit toujours se
- * justifier à l'écran. « Indisponible » n'apprend rien au bénévole, « vous avez
- * déjà retenu vos 3 créneaux » lui dit quoi faire.
+ * Réserver, retirer et figer un planning passent toutes par cette même liste :
+ * un planning fermé l'est pour les trois. Chaque cas porte son propre message :
+ * une règle qui bloque doit toujours se justifier à l'écran. « Indisponible »
+ * n'apprend rien au bénévole, « vous avez déjà retenu vos 3 créneaux » lui dit
+ * quoi faire.
  */
 enum BookingRule: string
 {
@@ -24,6 +26,7 @@ enum BookingRule: string
     case OverlappingSlot = 'overlapping_slot';
     case ThreeConsecutiveSlots = 'three_consecutive_slots';
     case ShiftFull = 'shift_full';
+    case MinimumSlotsNotReached = 'minimum_slots_not_reached';
 
     /**
      * Le motif affiché au bénévole.
@@ -47,6 +50,10 @@ enum BookingRule: string
             self::OverlappingSlot => 'Vous êtes déjà inscrit sur une autre mission de cette tranche horaire.',
             self::ThreeConsecutiveSlots => 'Vous ne pouvez pas enchaîner trois tranches horaires consécutives le même jour : une pause est obligatoire.',
             self::ShiftFull => 'Toutes les places de ce créneau sont prises.',
+            self::MinimumSlotsNotReached => $edition === null
+                ? 'Ce planning ne compte pas assez de créneaux pour être validé.'
+                : "Ce planning doit compter au moins {$edition->min_slots_per_volunteer} créneau"
+                    .($edition->min_slots_per_volunteer > 1 ? 'x' : '').' pour être validé.',
         };
     }
 }

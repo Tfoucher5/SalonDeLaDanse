@@ -54,4 +54,10 @@
     body {
         @apply bg-white;
     }
+
+    /* Une mission et ses consignes restent d'un seul tenant : une carte coupee
+       en deux par un saut de page est illisible sur le stand. */
+    .print-keep {
+        break-inside: avoid;
+    }
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignSystemController;
 use App\Http\Controllers\PlanningController;
+use App\Http\Controllers\PlanningSummaryController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShiftBookingController;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,12 @@ Route::get('/dashboard', DashboardController::class)
 Route::get('/planning', PlanningController::class)
     ->middleware(['auth', 'verified'])
     ->name('planning.index');
+
+// La fiche recapitulative se consulte et s imprime a tout moment, brouillon
+// compris : elle ne fait que restituer ce que le benevole a deja retenu.
+Route::get('/planning/fiche', PlanningSummaryController::class)
+    ->middleware(['auth', 'verified'])
+    ->name('planning.summary');
 
 // Composer son planning suppose la fenetre ouverte et le planning non verrouille :
 // 'registration.open' coupe court, PlanningRules reste l autorite sur le reste.

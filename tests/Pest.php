@@ -1,5 +1,11 @@
 <?php
 
+use App\Models\Edition;
+use App\Models\Mission;
+use App\Models\Shift;
+use App\Models\TimeSlot;
+use App\Models\User;
+use App\Services\PlanningRules;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
@@ -67,4 +73,65 @@ function fakePhoto(string $name = 'portrait.png', int $paddingKilobytes = 0): Up
     }
 
     return UploadedFile::fake()->createWithContent($name, $png);
+}
+
+/**
+ * Une edition ouverte a l inscription, avec ses cinq tranches horaires.
+ *
+ * @param  array<string, mixed>  $attributes
+ */
+function salon(array $attributes = []): Edition
+{
+    $edition = Edition::factory()->create($attributes + [
+        'registration_opens_at' => now()->subDay(),
+        'registration_closes_at' => now()->addDay(),
+    ]);
+
+    $tranches = [
+        1 => ['08:30', '10:00'],
+        2 => ['10:00', '12:00'],
+        3 => ['12:00', '14:00'],
+        4 => ['14:00', '16:00'],
+        5 => ['16:00', '18:00'],
+    ];
+
+    foreach ($tranches as $position => [$startsAt, $endsAt]) {
+        TimeSlot::factory()->atPosition($position, $startsAt, $endsAt)->create([
+            'edition_id' => $edition->id,
+        ]);
+    }
+
+    return $edition;
+}
+
+/**
+ * Un creneau reservable : une mission a lui, la tranche et le jour demandes.
+ */
+function creneau(
+    Edition $edition,
+    int $position = 1,
+    string $date = '2027-05-14',
+    int $capacity = 4,
+    bool $restricted = false,
+): Shift {
+    $mission = Mission::factory()
+        ->when($restricted, fn ($factory) => $factory->restricted())
+        ->create(['edition_id' => $edition->id]);
+
+    return Shift::factory()->withCapacity($capacity)->create([
+        'edition_id' => $edition->id,
+        'mission_id' => $mission->id,
+        'time_slot_id' => $edition->timeSlots()->where('position', $position)->value('id'),
+        'date' => $date,
+    ]);
+}
+
+function benevole(Edition $edition): User
+{
+    return User::factory()->forEdition($edition)->create();
+}
+
+function rules(): PlanningRules
+{
+    return app(PlanningRules::class);
 }

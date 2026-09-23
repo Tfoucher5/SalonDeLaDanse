@@ -146,6 +146,62 @@ class PlanningRules
     }
 
     /**
+     * La règle qui empêche la validation définitive, null si elle est possible.
+     *
+     * La validation appartient à l'équipe organisatrice, pas au bénévole : ce
+     * sont le back-office et ses tests qui appellent cette règle. Le quota
+     * minimum ne se vérifie qu'ici — un planning en brouillon a le droit d'être
+     * vide, c'est au moment de le figer qu'il doit tenir debout.
+     */
+    public function validationViolationFor(User $user): ?BookingRule
+    {
+        $edition = $user->activeEdition();
+
+        if ($edition === null) {
+            return BookingRule::PlanningClosed;
+        }
+
+        $locked = $this->lockedBy(PlanningState::for($user, $edition));
+
+        if ($locked !== null) {
+            return $locked;
+        }
+
+        if ($user->assignments()->count() < $edition->min_slots_per_volunteer) {
+            return BookingRule::MinimumSlotsNotReached;
+        }
+
+        return null;
+    }
+
+    /**
+     * Fige le planning d'un bénévole : il passe en lecture seule.
+     *
+     * Le bénévole est relu sous verrou avant d'écrire la date : deux
+     * validations envoyées coup sur coup ne doivent en produire qu'une.
+     *
+     * @throws BookingRuleException
+     */
+    public function validate(User $user): void
+    {
+        DB::transaction(function () use ($user): void {
+            /** @var User $locked */
+            $locked = User::query()->whereKey($user->getKey())->lockForUpdate()->firstOrFail();
+
+            $violation = $this->validationViolationFor($locked);
+
+            if ($violation !== null) {
+                throw BookingRuleException::make($violation, $locked->activeEdition());
+            }
+
+            $locked->planning_validated_at = now();
+            $locked->save();
+
+            $user->planning_validated_at = $locked->planning_validated_at;
+        });
+    }
+
+    /**
      * La règle qui ferme le planning à l'écriture, null s'il reste un brouillon.
      *
      * Ajout et retrait passent par cette même traduction : un planning fermé
