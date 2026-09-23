@@ -2,8 +2,8 @@
 
 @props(['title'])
 
-<div {{ $attributes->merge(['class' => 'rounded-lg border border-dashed border-zinc-200 bg-white p-8 text-center']) }}>
-    <p class="font-medium text-zinc-900">{{ $title }}</p>
+<div {{ $attributes->merge(['class' => 'rounded-2xl border border-dashed border-zinc-300 bg-white/60 p-8 text-center']) }}>
+    <p class="font-semibold text-zinc-900">{{ $title }}</p>
 
     @if (trim($slot) !== '')
         <div class="mx-auto mt-1 max-w-md text-sm text-zinc-500">{{ $slot }}</div>

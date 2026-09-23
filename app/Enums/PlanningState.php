@@ -71,7 +71,7 @@ enum PlanningState: string
     public function tone(): string
     {
         return match ($this) {
-            self::Draft => 'primary',
+            self::Draft => 'plum',
             self::Validated => 'free',
             self::Locked => 'neutral',
             self::Closed => 'full',

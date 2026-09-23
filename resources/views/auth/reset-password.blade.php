@@ -1,7 +1,7 @@
-<x-guest-layout :title="__('Reset Password')">
-    <h1 class="text-xl font-semibold text-zinc-900">{{ __('Reset Password') }}</h1>
+<x-guest-layout :title="__('Reset Password')" :back="route('login')" back-label="Connexion">
+    <x-ui.form-heading :title="__('Reset Password')" />
 
-    <form method="POST" action="{{ route('password.store') }}" class="mt-6 space-y-4">
+    <form method="POST" action="{{ route('password.store') }}" class="space-y-4">
         @csrf
 
         <input type="hidden" name="token" value="{{ $request->route('token') }}">
@@ -18,8 +18,8 @@
             <x-text-input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password" />
         </x-ui.field>
 
-        <div class="flex justify-end pt-2">
-            <x-ui.button variant="primary" size="touch">{{ __('Reset Password') }}</x-ui.button>
+        <div class="pt-1">
+            <x-ui.button variant="primary" size="touch" block>{{ __('Reset Password') }}</x-ui.button>
         </div>
     </form>
 </x-guest-layout>

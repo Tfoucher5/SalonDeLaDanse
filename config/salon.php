@@ -50,6 +50,37 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Mentions legales
+    |--------------------------------------------------------------------------
+    |
+    | L editeur est l association JayDance Fam, organisatrice du Salon : ses
+    | identifiants sont publics (registre SIRENE, repertoire des associations).
+    | L hebergeur depend du deploiement et se renseigne donc dans .env.
+    |
+    */
+
+    'legal' => [
+        'publisher' => [
+            'name' => env('SALON_LEGAL_PUBLISHER_NAME', 'JayDance Fam'),
+            'status' => 'Association déclarée, régie par la loi du 1er juillet 1901',
+            'address' => env('SALON_LEGAL_PUBLISHER_ADDRESS', 'Decathlon, avenue du Moulin Marcille, 49130 Les Ponts-de-Cé'),
+            'siren' => env('SALON_LEGAL_PUBLISHER_SIREN', '877 993 584'),
+            'siret' => env('SALON_LEGAL_PUBLISHER_SIRET', '877 993 584 00029'),
+            'rna' => env('SALON_LEGAL_PUBLISHER_RNA', 'W491019569'),
+            'director' => env('SALON_LEGAL_PUBLICATION_DIRECTOR', 'Sandra Cailleau, à la présidence de l\'association'),
+            'email' => env('SALON_LEGAL_PUBLISHER_EMAIL', 'salondeladanse49@gmail.com'),
+            'phone' => env('SALON_LEGAL_PUBLISHER_PHONE', '02 41 93 83 77'),
+        ],
+        'host' => [
+            'name' => env('SALON_LEGAL_HOST_NAME'),
+            'address' => env('SALON_LEGAL_HOST_ADDRESS'),
+            'website' => env('SALON_LEGAL_HOST_WEBSITE'),
+        ],
+        'data_retention_months' => (int) env('SALON_LEGAL_DATA_RETENTION_MONTHS', 12),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Photo du benevole
     |--------------------------------------------------------------------------
     |
@@ -81,6 +112,8 @@ return [
     'seed' => [
         'default_shift_capacity' => (int) env('SALON_DEFAULT_SHIFT_CAPACITY', 4),
         'invitation_codes' => (int) env('SALON_SEED_INVITATION_CODES', 20),
+        // Benevoles fictifs de VolunteerSeeder, a lancer a part en developpement.
+        'volunteers' => (int) env('SALON_SEED_VOLUNTEERS', 100),
     ],
 
 ];

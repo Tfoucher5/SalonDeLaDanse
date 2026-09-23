@@ -2,7 +2,7 @@
     Bouton unique de l'application, lien ou bouton selon `href`.
 
     Un seul bouton `primary` par ecran : c'est ce qui rend l'action principale
-    evidente. Tout le reste est `secondary`, `ghost` ou `danger`.
+    evidente. Tout le reste est `secondary`, `ghost`, `ink` ou `danger`.
 --}}
 
 @props([
@@ -14,20 +14,24 @@
 ])
 
 @php
-    $base = 'inline-flex items-center justify-center gap-2 rounded-md px-4 text-sm font-medium transition duration-150 ease-in-out disabled:pointer-events-none disabled:opacity-50';
+    $base = 'inline-flex items-center justify-center gap-2 rounded-xl px-5 text-sm font-semibold transition duration-150 ease-out active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50';
 
     $variants = [
-        'primary' => 'border border-transparent bg-primary text-white hover:bg-primary-hover',
-        'secondary' => 'border border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-100',
+        'primary' => 'border border-transparent bg-primary text-white shadow-cta hover:bg-primary-hover',
+        'secondary' => 'border border-zinc-900/10 bg-white text-zinc-900 hover:bg-zinc-100',
         'ghost' => 'border border-transparent bg-transparent text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900',
-        'danger' => 'border border-zinc-200 bg-white text-danger hover:bg-zinc-100',
+        'ink' => 'border border-transparent bg-zinc-900 text-white hover:bg-zinc-800',
+        'danger' => 'border border-zinc-900/10 bg-white text-danger hover:bg-zinc-100',
+        // Retrait d'un creneau deja retenu : il reprend l'emeraude du badge
+        // « Vous participez » de la carte, sans concurrencer le primaire.
+        'booked' => 'border border-gauge-free bg-white text-gauge-free hover:bg-gauge-free/5',
     ];
 
     // `touch` respecte la cible tactile de 44 px du mobile first ; `md` suffit
     // aux barres d'outils denses de l'administration.
     $sizes = [
         'md' => 'h-10',
-        'touch' => 'h-11 min-h-touch',
+        'touch' => 'h-12 min-h-touch',
     ];
 
     $classes = implode(' ', array_filter([

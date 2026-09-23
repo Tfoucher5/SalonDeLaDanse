@@ -37,7 +37,10 @@ function registrationPayload(array $overrides = []): array
 }
 
 it('affiche le formulaire d inscription une fois le code valide', function () {
-    $this->get(route('register'))->assertOk();
+    $this->get(route('register'))
+        ->assertOk()
+        ->assertSee('name="birth_date"', escape: false)
+        ->assertSee('Aperçu de votre photo');
 });
 
 it('cree le compte benevole, consomme le code et stocke la photo', function () {
@@ -174,4 +177,12 @@ it('refuse une date de naissance dans le futur', function () {
 it('refuse une date de naissance qui n est pas une date', function () {
     $this->post(route('register'), registrationPayload(['birth_date' => '14 mai']))
         ->assertSessionHasErrors('birth_date');
+});
+
+it('demande de choisir de nouveau la photo apres un refus', function () {
+    $this->from(route('register'))
+        ->followingRedirects()
+        ->post(route('register'), registrationPayload(['email' => 'pas-un-email']))
+        ->assertOk()
+        ->assertSee('choisissez de nouveau votre photo');
 });

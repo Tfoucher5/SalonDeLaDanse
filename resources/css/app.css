@@ -12,6 +12,10 @@
     html {
         -webkit-text-size-adjust: 100%;
         scroll-behavior: smooth;
+        /* La gouttiere de la barre de defilement est toujours reservee : sans
+           cela, une page courte et une page longue ne centrent pas leur contenu
+           au meme endroit et tout se decale d'un ecran a l'autre. */
+        scrollbar-gutter: stable;
     }
 
     body {
@@ -33,6 +37,136 @@
 
     ::selection {
         @apply bg-primary-soft text-primary;
+    }
+}
+
+@layer components {
+    /* Halos d'ambiance de la charte « Salon Danse Élan » : une lueur terracotta
+       en haut, une lueur emeraude en bas. Fixes, derriere tout le contenu. */
+    .stage-glow {
+        @apply pointer-events-none fixed inset-0 -z-10;
+        background:
+            radial-gradient(60rem 28rem at 85% -8%, theme('colors.primary.soft') 0%, transparent 70%),
+            radial-gradient(40rem 22rem at 0% 110%, theme('colors.gauge.free / 8%') 0%, transparent 70%);
+    }
+}
+
+/* ------------------------------------------------------------------------
+   Mouvement. Tout est court (moins de 300 ms) et disparait quand le systeme
+   demande de reduire les animations.
+   ------------------------------------------------------------------------ */
+
+/* Entre deux pages : le navigateur enchaine l'ancienne et la nouvelle par un
+   fondu glisse. Les barres de navigation portent leur propre nom de transition
+   et restent donc immobiles pendant que le contenu change. */
+@view-transition {
+    navigation: auto;
+}
+
+.vt-site-nav {
+    view-transition-name: site-nav;
+}
+
+.vt-tab-bar {
+    view-transition-name: tab-bar;
+}
+
+::view-transition-old(root) {
+    animation: 160ms ease-in both page-out;
+}
+
+::view-transition-new(root) {
+    animation: 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both page-in;
+}
+
+@keyframes page-out {
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes page-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+}
+
+/* Changement de jour dans le planning : le contenu arrive du cote vers lequel
+   on s'est deplace. */
+.planning-day[data-enter='forward'] {
+    animation: 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both day-in-forward;
+}
+
+.planning-day[data-enter='backward'] {
+    animation: 280ms cubic-bezier(0.2, 0.8, 0.2, 1) both day-in-backward;
+}
+
+@keyframes day-in-forward {
+    from {
+        opacity: 0;
+        transform: translateX(28px);
+    }
+}
+
+@keyframes day-in-backward {
+    from {
+        opacity: 0;
+        transform: translateX(-28px);
+    }
+}
+
+/* Ouverture d'une tranche horaire. */
+details[open] > .slot-body {
+    animation: 220ms ease-out both slot-open;
+}
+
+@keyframes slot-open {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+}
+
+/* L'anneau « Mes creneaux » se remplit a l'arrivee sur la page ; apres une
+   reservation, il glisse de l'ancienne valeur a la nouvelle (planning.js). */
+.progress-ring {
+    transition: stroke-dasharray 700ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    animation: 900ms cubic-bezier(0.2, 0.8, 0.2, 1) 150ms both ring-fill;
+}
+
+.progress-ring[data-static] {
+    animation: none;
+}
+
+@keyframes ring-fill {
+    from {
+        stroke-dasharray: 0 100;
+    }
+}
+
+/* La carte qui vient d'etre reservee ou retiree le signale brievement. */
+[data-updated] {
+    animation: 700ms ease-out card-updated;
+}
+
+@keyframes card-updated {
+    from {
+        box-shadow: 0 0 0 6px theme('colors.primary.bright / 25%');
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    @view-transition {
+        navigation: none;
+    }
+
+    *,
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation-duration: 1ms !important;
+        transition-duration: 1ms !important;
     }
 }
 

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PlanningState;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -11,12 +12,21 @@ use Illuminate\View\View;
 class ProfileController extends Controller
 {
     /**
-     * Display the user's profile form.
+     * Le profil du bénévole, et à côté l'état de son planning.
+     *
+     * Le mot de passe ne se change pas ici : le parcours « mot de passe oublié »
+     * de la page de connexion est le seul chemin, par e-mail.
      */
     public function edit(Request $request): View
     {
+        $user = $request->user();
+        $edition = $user->activeEdition();
+
         return view('profile.edit', [
-            'user' => $request->user(),
+            'user' => $user,
+            'edition' => $edition,
+            'state' => PlanningState::for($user, $edition),
+            'bookedCount' => $user->assignments()->count(),
         ]);
     }
 

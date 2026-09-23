@@ -16,16 +16,16 @@
 
     <x-ui.card title="L'intention" subtitle="Le principe qui tranche tous les arbitrages.">
         <p class="text-zinc-900">
-            L'interface est neutre pour que la couleur appartienne à l'information. Dans la
-            grille de planning, le vert, l'ambre et le gris des jauges sont le seul message
-            qui compte : un habillage coloré entrerait en concurrence avec eux.
+            Une interface chaleureuse et rythmée, inspirée de la scène : fond porcelaine,
+            action en terracotta, états en prune, disponibilité en émeraude. La couleur
+            d'information (les jauges) reste distincte de la couleur d'action.
         </p>
 
         <ul class="mt-4 space-y-2 text-sm text-zinc-500">
-            <li>Un seul accent, l'indigo, réservé à ce sur quoi on peut cliquer.</li>
+            <li>Terracotta pour ce sur quoi on peut cliquer, prune pour les états.</li>
             <li>« Complet » est gris, jamais rouge. Le rouge dit l'échec, pas l'état normal.</li>
-            <li>Bordures plutôt qu'ombres. Une seule ombre, pour ce qui flotte vraiment.</li>
-            <li>Pas de pilules : rayon 6 px sur les commandes, 8 px sur les surfaces.</li>
+            <li>Ombres chaudes nommées (card, lift, cta, overlay), jamais les ombres grises génériques.</li>
+            <li>Capsules pour badges et pastilles, 12 px sur les commandes, 16 px sur les cartes.</li>
             <li>La couleur ne suffit jamais : tout état porte aussi un mot.</li>
         </ul>
     </x-ui.card>
@@ -34,8 +34,8 @@
         <x-ui.card :title="$paletteTitle">
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ($swatches as [$token, $hex, $usage, $swatchClass])
-                    <div class="flex items-center gap-3 rounded-md border border-zinc-200 p-3">
-                        <span class="h-10 w-10 shrink-0 rounded-md border border-zinc-200 {{ $swatchClass }}"></span>
+                    <div class="flex items-center gap-3 rounded-xl bg-zinc-50 p-3">
+                        <span class="h-10 w-10 shrink-0 rounded-lg ring-1 ring-zinc-900/10 {{ $swatchClass }}"></span>
 
                         <div class="min-w-0">
                             <p class="tabular-grid text-sm font-medium text-zinc-900">{{ $token }} · {{ $hex }}</p>
@@ -47,7 +47,7 @@
         </x-ui.card>
     @endforeach
 
-    <x-ui.card title="Typographie" subtitle="Inter, une seule famille. La hiérarchie se fait à la taille et à la graisse.">
+    <x-ui.card title="Typographie" subtitle="Plus Jakarta Sans, une seule famille. La hiérarchie se fait à la taille et à la graisse.">
         <div class="space-y-4">
             <div>
                 <p class="text-2xl font-semibold text-zinc-900 sm:text-3xl">Titre de page</p>
@@ -69,7 +69,7 @@
                 <p class="text-sm text-zinc-500">13-14 px · 400-500 · zinc-500</p>
             </div>
 
-            <div class="tabular-grid rounded-md border border-zinc-200 p-3">
+            <div class="tabular-grid rounded-xl bg-zinc-50 p-3">
                 <p class="text-zinc-900">08:30 - 10:00 · 11 places restantes</p>
                 <p class="text-sm text-zinc-500">Chiffres tabulaires : classe tabular-grid sur toute grille ou tableau.</p>
             </div>
@@ -81,7 +81,8 @@
             <x-ui.button variant="primary" type="button">Valider définitivement</x-ui.button>
             <x-ui.button type="button">Secondaire</x-ui.button>
             <x-ui.button variant="ghost" type="button">Discret</x-ui.button>
-            <x-ui.button variant="danger" type="button">Retirer ce créneau</x-ui.button>
+            <x-ui.button variant="booked" type="button">Se désister</x-ui.button>
+            <x-ui.button variant="danger" type="button">Supprimer</x-ui.button>
             <x-ui.button variant="primary" type="button" disabled>Désactivé</x-ui.button>
         </div>
 
@@ -181,7 +182,7 @@
                 <th scope="col">Traitement</th>
             </x-slot>
 
-            @foreach ([['Disponible', 'Bordure zinc-200, fond blanc, bouton « Réserver ».'], ['Réservé par le bénévole', 'Bordure primary, fond primary-soft, badge « Réservé » et retrait possible.'], ['Complet', 'Fond zinc-50, titre zinc-400, aucune commande.'], ['Bloqué par une règle', 'Comme « complet », plus le motif en clair sous la jauge.']] as [$cardState, $treatment])
+            @foreach ([['Disponible', 'Tuile blanche : « Disponibilité », badge de places, jauge à segments (une place libre par segment), bouton primaire « Réserver ce créneau » pleine largeur.'], ['Presque complet', 'Segments et badge ambre ; « Dernière place ! » sur la toute dernière place.'], ['Réservé par le bénévole', 'Anneau émeraude, badge « Vous participez », bouton « Se désister » (variante booked).'], ['Complet ou bloqué par une règle', 'Fond zinc-50, jauge grise, le motif en clair dans une tuile grise à la place du bouton.']] as [$cardState, $treatment])
                 <tr>
                     <td class="font-medium">{{ $cardState }}</td>
                     <td>{{ $treatment }}</td>
