@@ -9,6 +9,10 @@
  * On ne recharge pas la page : le curseur resterait au debut du champ de
  * recherche a chaque frappe, ce qui rend la saisie impraticable.
  *
+ * Tout passe par `$root`, jamais par `$el` : les ecouteurs sont poses sur les
+ * champs, et Alpine resout `$el` vers l'element qui declenche l'evenement. Une
+ * liste deroulante n'est pas un formulaire, et `new FormData(<select>)` leve.
+ *
  * @param {string} targetId identifiant de la zone a remplacer
  */
 export default function liveFilters(targetId) {
@@ -30,7 +34,7 @@ export default function liveFilters(targetId) {
             // Zone introuvable : on retombe sur la soumission classique plutot
             // que de ne rien faire du tout.
             if (target === null) {
-                this.$el.submit();
+                this.$root.submit();
 
                 return;
             }
@@ -67,7 +71,7 @@ export default function liveFilters(targetId) {
                 window.history.replaceState({}, '', url);
             } catch (error) {
                 if (error.name !== 'AbortError') {
-                    this.$el.submit();
+                    this.$root.submit();
                 }
             } finally {
                 this.busy = false;
@@ -81,7 +85,7 @@ export default function liveFilters(targetId) {
         url() {
             const params = new URLSearchParams();
 
-            new FormData(this.$el).forEach((value, key) => {
+            new FormData(this.$root).forEach((value, key) => {
                 if (value !== '') {
                     params.append(key, value);
                 }
@@ -89,7 +93,7 @@ export default function liveFilters(targetId) {
 
             const query = params.toString();
 
-            return query === '' ? this.$el.action : `${this.$el.action}?${query}`;
+            return query === '' ? this.$root.action : `${this.$root.action}?${query}`;
         },
     };
 }
