@@ -1,3 +1,10 @@
+<x-ui.card :title="__('Profile Information')"
+           :subtitle="__('These details are locked. Contact the organising team to have them changed.')">
+    <x-ui.data-list>
+        <x-ui.data-row :label="__('First Name')">{{ $user->first_name }}</x-ui.data-row>
+        <x-ui.data-row :label="__('Last Name')">{{ $user->last_name }}</x-ui.data-row>
+        <x-ui.data-row :label="__('Email')">{{ $user->email }}</x-ui.data-row>
+        <x-ui.data-row :label="__('Phone')">{{ $user->phone }}</x-ui.data-row>
 <section>
     <header>
         <h2 class="text-lg font-semibold text-zinc-900">
@@ -28,6 +35,13 @@
         <div class="flex items-start justify-between gap-4 py-3">
             <dt class="text-sm text-zinc-500">{{ __('Phone') }}</dt>
             <dd class="text-sm text-zinc-900 tabular-grid">{{ $user->phone }}</dd>
+        </div>
+
+        <div class="flex items-start justify-between gap-4 py-3">
+            <dt class="text-sm text-zinc-500">{{ __('Date of birth') }}</dt>
+            <dd class="text-sm text-zinc-900 tabular-grid">
+                {{ $user->birth_date?->translatedFormat('d/m/Y') ?? __('None') }}
+            </dd>
         </div>
 
         <x-ui.data-row :label="__('Recent photo')">
