@@ -22,6 +22,9 @@
         'ghost' => 'border border-transparent bg-transparent text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900',
         'ink' => 'border border-transparent bg-zinc-900 text-white hover:bg-zinc-800',
         'danger' => 'border border-zinc-900/10 bg-white text-danger hover:bg-zinc-100',
+        // Retrait d'un creneau deja retenu : il reprend l'emeraude du badge
+        // « Vous participez » de la carte, sans concurrencer le primaire.
+        'booked' => 'border border-gauge-free bg-white text-gauge-free hover:bg-gauge-free/5',
     ];
 
     // `touch` respecte la cible tactile de 44 px du mobile first ; `md` suffit

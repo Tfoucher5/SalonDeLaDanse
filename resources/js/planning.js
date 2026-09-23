@@ -48,6 +48,28 @@ export default () => ({
     },
 
     /**
+     * Le compteur « Mes créneaux » : l'anneau part de sa valeur actuelle au
+     * lieu de rejouer son remplissage depuis zéro.
+     */
+    replaceSummary(nextDocument) {
+        const from = document.querySelector('#planning-summary .progress-ring')?.getAttribute('stroke-dasharray');
+        const ring = this.replace(nextDocument, '#planning-summary')?.querySelector('.progress-ring');
+
+        if (! ring || ! from) {
+            return;
+        }
+
+        const to = ring.getAttribute('stroke-dasharray');
+
+        ring.dataset.static = '';
+        ring.style.strokeDasharray = from;
+        ring.getBoundingClientRect();
+        requestAnimationFrame(() => {
+            ring.style.strokeDasharray = to;
+        });
+    },
+
+    /**
      * Les notifications de la réponse remplacent celles de la page.
      */
     replaceToasts(nextDocument) {
@@ -78,7 +100,7 @@ export default () => ({
                 body: new FormData(form),
             });
 
-            this.replace(nextDocument, '#planning-summary');
+            this.replaceSummary(nextDocument);
 
             const actedCardId = form.closest('article')?.id;
 

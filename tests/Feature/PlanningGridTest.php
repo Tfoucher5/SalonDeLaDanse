@@ -118,7 +118,7 @@ it('marque les creneaux deja retenus par le benevole', function () {
 
     $this->actingAs($user)
         ->get('/planning')
-        ->assertSee('Réservé')
+        ->assertSee('Vous participez')
         ->assertSee('1 créneau');
 });
 
@@ -138,7 +138,7 @@ it('propose le retrait d un creneau deja retenu', function () {
 
     $this->actingAs($user)
         ->get('/planning')
-        ->assertSee('Retirer ce créneau');
+        ->assertSee('Se désister');
 });
 
 it('ne propose aucune action quand les inscriptions sont fermees', function () {
@@ -148,7 +148,7 @@ it('ne propose aucune action quand les inscriptions sont fermees', function () {
     $this->actingAs(User::factory()->forEdition($edition)->create())
         ->get('/planning')
         ->assertDontSee('Réserver')
-        ->assertDontSee('Retirer ce créneau');
+        ->assertDontSee('Se désister');
 });
 
 it('navigue d un jour a l autre du Salon', function () {
@@ -240,7 +240,7 @@ it('annonce un planning verrouille par l equipe organisatrice', function () {
         ->get('/planning')
         ->assertSee('Verrouillé')
         ->assertDontSee('Réserver')
-        ->assertDontSee('Retirer ce créneau');
+        ->assertDontSee('Se désister');
 });
 
 it('reste consultable sans aucune edition en base', function () {

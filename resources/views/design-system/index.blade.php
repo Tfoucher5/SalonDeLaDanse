@@ -81,7 +81,8 @@
             <x-ui.button variant="primary" type="button">Valider définitivement</x-ui.button>
             <x-ui.button type="button">Secondaire</x-ui.button>
             <x-ui.button variant="ghost" type="button">Discret</x-ui.button>
-            <x-ui.button variant="danger" type="button">Retirer ce créneau</x-ui.button>
+            <x-ui.button variant="booked" type="button">Se désister</x-ui.button>
+            <x-ui.button variant="danger" type="button">Supprimer</x-ui.button>
             <x-ui.button variant="primary" type="button" disabled>Désactivé</x-ui.button>
         </div>
 
@@ -181,7 +182,7 @@
                 <th scope="col">Traitement</th>
             </x-slot>
 
-            @foreach ([['Disponible', 'Bordure zinc-200, fond blanc, bouton « Réserver ».'], ['Réservé par le bénévole', 'Bordure primary, fond primary-soft, badge « Réservé » et retrait possible.'], ['Complet', 'Fond zinc-50, titre zinc-400, aucune commande.'], ['Bloqué par une règle', 'Comme « complet », plus le motif en clair sous la jauge.']] as [$cardState, $treatment])
+            @foreach ([['Disponible', 'Tuile blanche : « Disponibilité », badge de places, jauge à segments (une place libre par segment), bouton primaire « Réserver ce créneau » pleine largeur.'], ['Presque complet', 'Segments et badge ambre ; « Dernière place ! » sur la toute dernière place.'], ['Réservé par le bénévole', 'Anneau émeraude, badge « Vous participez », bouton « Se désister » (variante booked).'], ['Complet ou bloqué par une règle', 'Fond zinc-50, jauge grise, le motif en clair dans une tuile grise à la place du bouton.']] as [$cardState, $treatment])
                 <tr>
                     <td class="font-medium">{{ $cardState }}</td>
                     <td>{{ $treatment }}</td>

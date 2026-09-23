@@ -60,13 +60,15 @@ Ombres nommées uniquement, teintées prune : `shadow-card` (surfaces), `shadow-
 ## Composants clés
 
 - **Bouton** : primaire terracotta plein avec `shadow-cta`, `active:scale-[0.98]` ;
-  variantes `secondary`, `ghost`, `ink` (noir), `danger`. Taille `touch` = 48 px.
+  variantes `secondary`, `ghost`, `ink` (noir), `danger`, `booked` (contour émeraude, retrait d'un créneau). Taille `touch` = 48 px.
 - **Badge** : capsule, `dot` ajoute la pastille d'état. Tons `neutral`, `primary`,
   `primary-outline`, `plum`, `free`, `tight`, `full`, `danger`.
-- **Carte de créneau** : titre de mission, capsule de places restantes (ton de jauge),
-  consignes de la mission, horaire en capitales, bouton « Réserver ». Réservée :
-  `ring-2 ring-primary` sur fond `primary-soft`. Bloquée : fond `zinc-50` et **motif en
-  clair** dans une tuile grise.
+- **Carte de créneau** (tuile à jauge, maquette « Tuiles avec Jauges ») : sur-titre
+  « Disponibilité » et capsule de places (ton de jauge), jauge à segments — un segment
+  par place libre, barre continue au-delà de 8 places —, titre de mission, consignes,
+  bouton primaire « Réserver ce créneau » pleine largeur. Réservée : `ring-2
+  ring-gauge-free/50`, badge `free` « Vous participez », bouton `booked` « Se désister ».
+  Bloquée : fond `zinc-50` et **motif en clair** dans une tuile grise à la place du bouton.
 - **Sélecteur de jour** : commande segmentée sur fond `zinc-100`, l'actif en carte
   blanche, collé sous la barre du haut.
 - **Navigation** : mobile = barre du haut (marque + compte) et **barre d'onglets fixe

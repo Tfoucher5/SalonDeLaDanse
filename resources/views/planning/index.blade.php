@@ -34,59 +34,65 @@
             $ratio = $maximum > 0 ? min($booked, $maximum) / $maximum : 0;
         @endphp
 
-        {{-- Ce que le benevole a deja retenu, tous jours confondus. --}}
+        {{-- Ce que le benevole a deja retenu, tous jours confondus. Deux halos
+             comme sur la maquette Stitch, et l'anneau se remplit a l'arrivee
+             (voir .progress-ring dans resources/css/app.css). --}}
         <section id="planning-summary" class="relative overflow-hidden rounded-3xl bg-white p-5 shadow-card ring-1 ring-zinc-900/5 sm:p-6" aria-labelledby="mes-creneaux">
-            <div class="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-primary-soft blur-2xl" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-primary-soft blur-2xl" aria-hidden="true"></div>
+            <div class="pointer-events-none absolute -bottom-12 -left-12 h-56 w-56 rounded-full bg-gauge-free/10 blur-2xl" aria-hidden="true"></div>
 
-            <div class="relative flex items-center gap-4 sm:gap-6">
-                <div class="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-zinc-50 sm:h-28 sm:w-28">
-                    <svg class="h-20 w-20 -rotate-90 sm:h-24 sm:w-24" viewBox="0 0 36 36" aria-hidden="true">
-                        <circle cx="18" cy="18" r="15.9155" fill="none" stroke-width="3.5" class="stroke-zinc-200" />
-                        <circle cx="18" cy="18" r="15.9155" fill="none" stroke-width="3.5" stroke-linecap="round"
-                                class="stroke-primary" stroke-dasharray="{{ round($ratio * 100, 1) }}, 100" />
+            <div class="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6">
+                <div class="flex min-w-0 flex-1 items-center gap-4 sm:gap-6">
+                    <div class="relative flex h-24 w-24 shrink-0 items-center justify-center rounded-2xl bg-zinc-50 sm:h-28 sm:w-28">
+                        <svg class="h-20 w-20 -rotate-90 sm:h-24 sm:w-24" viewBox="0 0 36 36" aria-hidden="true">
+                            <circle cx="18" cy="18" r="15.9155" fill="none" stroke-width="3.5" class="stroke-zinc-200" />
+                            <circle cx="18" cy="18" r="15.9155" fill="none" stroke-width="3.5" stroke-linecap="round"
+                                    class="progress-ring stroke-primary" stroke-dasharray="{{ round($ratio * 100, 1) }}, 100" />
+                        </svg>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center tabular-grid">
+                            <span class="text-xl font-extrabold leading-none text-zinc-900">{{ $booked }}/{{ $maximum }}</span>
+                            <span class="mt-0.5 text-[0.625rem] font-bold uppercase tracking-[0.08em] text-zinc-500">Créneaux</span>
+                        </div>
+                    </div>
+
+                    <div class="min-w-0 flex-1 space-y-2">
+                        <h2 id="mes-creneaux" class="text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-primary">
+                            Mes créneaux — tous jours confondus
+                        </h2>
+
+                        <p class="tabular-grid text-sm text-zinc-900 sm:text-[0.9375rem]">
+                            <strong class="font-bold">{{ $booked }} créneau{{ $booked > 1 ? 'x' : '' }} retenu{{ $booked > 1 ? 's' : '' }}</strong>
+                            sur {{ $maximum }} possibles.
+
+                            @if ($booked < $minimum)
+                                Vous vous êtes engagé sur {{ $minimum }} créneau{{ $minimum > 1 ? 'x' : '' }} au minimum.
+                            @endif
+                        </p>
+
+                        <div class="flex max-w-sm items-center gap-1.5" role="img"
+                             aria-label="{{ $booked }} créneau{{ $booked > 1 ? 'x' : '' }} sur {{ $maximum }}">
+                            @for ($segment = 1; $segment <= $maximum; $segment++)
+                                <span @class([
+                                    'h-2 flex-1 rounded-full transition-colors duration-300',
+                                    'bg-primary' => $segment <= $booked,
+                                    'bg-zinc-200' => $segment > $booked,
+                                ])></span>
+                            @endfor
+                        </div>
+                    </div>
+                </div>
+
+                <x-ui.button :href="route('planning.summary')" size="touch" class="w-full shrink-0 sm:w-auto">
+                    Voir mon planning
+                    <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M7.3 4.3a1 1 0 011.4 0l5 5a1 1 0 010 1.4l-5 5a1 1 0 01-1.4-1.4L11.6 10 7.3 5.7a1 1 0 010-1.4z" clip-rule="evenodd" />
                     </svg>
-                    <div class="absolute inset-0 flex flex-col items-center justify-center tabular-grid">
-                        <span class="text-xl font-extrabold leading-none text-zinc-900">{{ $booked }}/{{ $maximum }}</span>
-                        <span class="mt-0.5 text-[0.625rem] font-bold uppercase tracking-[0.08em] text-zinc-500">Créneaux</span>
-                    </div>
-                </div>
-
-                <div class="min-w-0 flex-1 space-y-2">
-                    <h2 id="mes-creneaux" class="text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-primary">
-                        Mes créneaux — tous jours confondus
-                    </h2>
-
-                    <p class="tabular-grid text-sm text-zinc-900 sm:text-[0.9375rem]">
-                        <strong class="font-bold">{{ $booked }} créneau{{ $booked > 1 ? 'x' : '' }} retenu{{ $booked > 1 ? 's' : '' }}</strong>
-                        sur {{ $maximum }} possibles.
-
-                        @if ($booked < $minimum)
-                            Vous vous êtes engagé sur {{ $minimum }} créneau{{ $minimum > 1 ? 'x' : '' }} au minimum.
-                        @endif
-                    </p>
-
-                    <div class="flex max-w-sm items-center gap-1.5" role="img"
-                         aria-label="{{ $booked }} créneau{{ $booked > 1 ? 'x' : '' }} sur {{ $maximum }}">
-                        @for ($segment = 1; $segment <= $maximum; $segment++)
-                            <span @class([
-                                'h-2 flex-1 rounded-full',
-                                'bg-primary' => $segment <= $booked,
-                                'bg-zinc-200' => $segment > $booked,
-                            ])></span>
-                        @endfor
-                    </div>
-                </div>
+                </x-ui.button>
             </div>
 
             @unless ($state->isEditable())
                 <x-ui.alert class="relative mt-5">{{ $state->description() }}</x-ui.alert>
             @endunless
-
-            <div class="relative mt-5 border-t border-zinc-200 pt-4">
-                <x-ui.button :href="route('planning.summary')" size="touch" class="w-full sm:w-auto">
-                    Voir mon planning
-                </x-ui.button>
-            </div>
         </section>
 
         {{-- Navigation par jour : un simple changement d'onglet, sans recharger
@@ -106,7 +112,12 @@
             @if ($selectedDay)
                 @php $openShifts = $shiftsByTimeSlot->flatten(1)->count(); @endphp
 
-                <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-plum to-primary p-5 text-white sm:p-6">
+                {{-- Bandeau du jour : le degrade de la charte et, en transparence,
+                     une scene de danse qui donne de la vie a la grille. --}}
+                <div class="relative flex min-h-[10rem] flex-col justify-end overflow-hidden rounded-3xl bg-gradient-to-r from-plum to-primary p-5 text-white sm:p-6">
+                    <img src="{{ asset('images/bandeau-scene.jpg') }}" alt="" decoding="async"
+                         class="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-30 mix-blend-overlay">
+
                     <div class="relative flex flex-wrap items-end justify-between gap-4">
                         <div>
                             <p class="text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-white/80">
@@ -180,7 +191,7 @@
                                     Aucune mission n'est ouverte sur cette tranche horaire.
                                 </p>
                             @else
-                                <div class="grid items-start gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
+                                <div class="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">
                                     @foreach ($shifts as $shift)
                                         <x-planning.shift-card
                                             :shift="$shift"
