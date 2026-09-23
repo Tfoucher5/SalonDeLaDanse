@@ -21,15 +21,24 @@ enum GaugeLevel: string
      */
     public static function for(Shift $shift): self
     {
-        $remaining = $shift->remaining_places;
+        return self::fromRemaining($shift->remaining_places, $shift->capacity);
+    }
 
-        if ($remaining <= 0) {
+    /**
+     * Le niveau d'une jauge quelconque, pas seulement celle d'un créneau.
+     *
+     * Le back-office agrège des dizaines de créneaux par jour ou par mission :
+     * il lit la même échelle, au même seuil, sans la recalculer de son côté.
+     */
+    public static function fromRemaining(int $remainingPlaces, int $capacity): self
+    {
+        if ($remainingPlaces <= 0) {
             return self::Full;
         }
 
         $tightRatio = (float) config('salon.gauge.tight_ratio');
 
-        if ($shift->capacity > 0 && $remaining / $shift->capacity <= $tightRatio) {
+        if ($capacity > 0 && $remainingPlaces / $capacity <= $tightRatio) {
             return self::Tight;
         }
 

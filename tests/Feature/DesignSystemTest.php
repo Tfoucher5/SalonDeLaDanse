@@ -56,11 +56,14 @@ it('bannit les pilules, signature de la charte abandonnee', function () {
 
 it('reserve l ombre unique aux elements qui flottent vraiment', function () {
     // Une seule ombre existe, `shadow-overlay`, et seuls le menu deroulant et
-    // la modale y ont droit. Empiler les ombres dans une grille dense la salit.
+    // les modales y ont droit. Empiler les ombres dans une grille dense la salit.
     expect(viewsMatching('/\bshadow-(?!overlay\b)[a-z0-9-]+/'))->toBe([]);
 
-    expect(viewsMatching('/\bshadow-overlay\b/'))
-        ->toBe(['components/dropdown.blade.php', 'components/modal.blade.php']);
+    expect(viewsMatching('/\bshadow-overlay\b/'))->toBe([
+        'components/dropdown.blade.php',
+        'components/modal.blade.php',
+        'components/ui/confirm-form.blade.php',
+    ]);
 });
 
 it('declare les tokens de la charte dans la configuration Tailwind', function () {

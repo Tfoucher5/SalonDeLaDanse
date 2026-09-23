@@ -76,6 +76,18 @@ class User extends Authenticatable
     }
 
     /**
+     * La page ou atterrit ce compte quand rien d autre n est demande.
+     *
+     * Le back-office et l espace benevole sont deux outils distincts : un
+     * administrateur qui se connecte arrive chez lui, pas sur un tableau de
+     * bord de benevole qui ne le concerne pas.
+     */
+    public function homeRoute(): string
+    {
+        return $this->isAdmin() ? 'admin.dashboard' : 'dashboard';
+    }
+
+    /**
      * Le planning a-t-il ete valide definitivement ?
      */
     public function planningIsValidated(): bool
@@ -92,6 +104,12 @@ class User extends Authenticatable
      */
     public function planningIsLockedByAdmin(): bool
     {
+        // Le back-office liste 25 benevoles par page : un `withCount` nomme
+        // evite autant de requetes, sur le modele de `Shift::takenPlaces()`.
+        if ($this->forced_assignments_count !== null) {
+            return $this->forced_assignments_count > 0;
+        }
+
         return once(fn (): bool => $this->assignments()->where('assigned_by_admin', true)->exists());
     }
 
@@ -151,5 +169,24 @@ class User extends Authenticatable
     protected function admins(Builder $query): void
     {
         $query->where('role', UserRole::Admin);
+    }
+
+    /**
+     * Les comptes rattaches a une edition, au sens de `activeEdition()`.
+     *
+     * Un compte sans rattachement retombe sur l edition courante : le
+     * back-office doit le compter avec elle, sinon un benevole existe a
+     * l ecran sans exister dans les compteurs.
+     */
+    #[Scope]
+    protected function ofEdition(Builder $query, Edition $edition): void
+    {
+        $query->where(function (Builder $scoped) use ($edition): void {
+            $scoped->where('edition_id', $edition->getKey());
+
+            if ($edition->is(Edition::current())) {
+                $scoped->orWhereNull('edition_id');
+            }
+        });
     }
 }

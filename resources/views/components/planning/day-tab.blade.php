@@ -7,9 +7,13 @@
 @props([
     'day',
     'selected' => false,
+    'route' => 'planning.index',
+    'params' => [],
 ])
 
-<a href="{{ route('planning.index', ['day' => $day->toDateString()]) }}"
+{{-- Le back-office reutilise ces onglets sur sa propre route : le jour reste
+     le premier niveau de lecture des deux cotes. --}}
+<a href="{{ route($route, ['day' => $day->toDateString()] + $params) }}"
    @if ($selected) aria-current="page" @endif
    {{ $attributes->merge(['class' => 'tabular-grid flex h-14 min-h-touch flex-1 basis-24 flex-col items-center justify-center rounded-md border transition '.($selected
         ? 'border-primary bg-primary text-white'

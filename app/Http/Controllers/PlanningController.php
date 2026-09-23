@@ -8,6 +8,7 @@ use App\Models\Shift;
 use App\Models\User;
 use App\Services\PlanningRules;
 use Illuminate\Contracts\View\View;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
@@ -31,9 +32,11 @@ class PlanningController extends Controller
         $days = $edition?->days() ?? collect();
         $selectedDay = $this->selectedDay($days, $request->query('day'));
 
+        $bookedShiftIds = $user->assignments()->pluck('shift_id');
+
         $shiftsByTimeSlot = $edition === null || $selectedDay === null
             ? collect()
-            : $this->shiftsOfDay($edition, $selectedDay);
+            : $this->shiftsOfDay($edition, $selectedDay, $bookedShiftIds);
 
         return view('planning.index', [
             'edition' => $edition,
@@ -42,7 +45,7 @@ class PlanningController extends Controller
             'selectedDay' => $selectedDay,
             'timeSlots' => $edition?->timeSlots()->get() ?? collect(),
             'shiftsByTimeSlot' => $shiftsByTimeSlot,
-            'bookedShiftIds' => $user->assignments()->pluck('shift_id'),
+            'bookedShiftIds' => $bookedShiftIds,
             'motives' => $this->motives($user, $shiftsByTimeSlot),
         ]);
     }
@@ -67,20 +70,25 @@ class PlanningController extends Controller
     }
 
     /**
-     * Les créneaux publics d'une journée, groupés par tranche horaire.
+     * Les créneaux réservables d'une journée, groupés par tranche horaire.
      *
-     * Les missions sous restriction sont écartées par la requête, pas masquées
-     * à l'affichage. `withCount` donne la jauge sans hydrater la moindre
+     * Les missions sous restriction et les missions fermées sont écartées par
+     * la requête, pas masquées à l'affichage. `withCount` donne la jauge sans hydrater la moindre
      * réservation : un bénévole ne doit connaître que le nombre de places.
      *
      * @return Collection<int, Collection<int, Shift>>
      */
-    private function shiftsOfDay(Edition $edition, Carbon $day): Collection
+    private function shiftsOfDay(Edition $edition, Carbon $day, Collection $bookedShiftIds): Collection
     {
         return $edition->shifts()
-            ->onPublicMissions()
+            ->where(fn (Builder $query) => $query
+                ->whereHas('mission', fn (Builder $mission) => $mission->bookable())
+                // Une mission fermee apres coup ne doit pas faire disparaitre le
+                // creneau de celui qui l occupe deja : il le verrait s evaporer
+                // de la grille sans explication.
+                ->orWhereIn('id', $bookedShiftIds))
             ->where('date', $day->toDateString())
-            ->with(['mission:id,name,position,is_public', 'timeSlot:id,starts_at,ends_at,position'])
+            ->with(['mission:id,name,position,is_public,is_active', 'timeSlot:id,starts_at,ends_at,position'])
             ->withCount('assignments')
             ->get()
             ->sortBy(fn (Shift $shift): int => $shift->mission->position)

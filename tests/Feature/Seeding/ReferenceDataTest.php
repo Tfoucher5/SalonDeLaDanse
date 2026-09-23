@@ -53,7 +53,7 @@ it('seede neuf missions publiques et deux missions restreintes', function () {
 });
 
 it('seede 135 creneaux publics reservables', function () {
-    expect(Shift::query()->onPublicMissions()->count())->toBe(135)
+    expect(Shift::query()->onBookableMissions()->count())->toBe(135)
         ->and(Shift::count())->toBe(165);
 });
 

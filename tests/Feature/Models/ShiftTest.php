@@ -47,7 +47,7 @@ it('ne retient que les creneaux des missions publiques', function () {
     ]);
 
     expect(Shift::count())->toBe(2)
-        ->and(Shift::query()->onPublicMissions()->pluck('id')->all())->toBe([$public->id]);
+        ->and(Shift::query()->onBookableMissions()->pluck('id')->all())->toBe([$public->id]);
 });
 
 it('interdit deux creneaux identiques sur mission, tranche et date', function () {

@@ -217,6 +217,8 @@ le composant — on ne recopie pas des classes dans une vue.
 | `x-ui.stat` | Un chiffre et ce qu'il compte | `label`, `value`, `hint` |
 | `x-ui.gauge` | Places restantes, texte + barre | `level` free/tight/full, `label`, `remaining`, `capacity` |
 | `x-ui.table` | Tableau d'administration | slot `head` |
+| `x-ui.select` | Liste deroulante, alignee sur `x-text-input` | `disabled` |
+| `x-ui.pagination` | Precedent / suivant et compteur de resultats | `paginator` |
 | `x-ui.empty` | Absence de données et sa raison | `title` |
 | `x-ui.container` | Gouttière et largeur de lecture | `size` sm/md/lg/xl |
 | `x-ui.avatar` | Photo du bénévole ou ses initiales | `user`, `size` |
