@@ -1,11 +1,11 @@
-<x-app-layout title="Planning">
+<x-app-layout title="Réservation de créneaux">
     <x-slot name="header">
         <x-ui.page-header
-            title="Le planning"
+            title="Réservation de créneaux"
             :back="route('dashboard')"
             back-label="Tableau de bord"
             :eyebrow="$edition?->name"
-            :subtitle="$edition ? 'Choisissez vos créneaux jour par jour.' : 'Aucune édition n\'est ouverte pour le moment.'">
+            :subtitle="$edition ? 'Choisissez vos créneaux, jour par jour.' : 'Aucune édition n\'est ouverte pour le moment.'">
             @if ($edition)
                 <x-slot name="actions">
                     <div class="flex items-center gap-3 rounded-2xl bg-white px-4 py-2.5 shadow-card ring-1 ring-zinc-900/5">
@@ -18,8 +18,8 @@
     </x-slot>
 
     @if ($edition === null)
-        <x-ui.empty title="Le planning n'est pas encore ouvert">
-            Il s'affichera ici dès qu'une édition du Salon sera ouverte aux inscriptions.
+        <x-ui.empty title="La réservation n'est pas encore ouverte">
+            Elle s'ouvrira ici dès qu'une édition du Salon sera ouverte aux inscriptions.
         </x-ui.empty>
     @else
         {{-- Reserver, retirer et changer de jour se font sans recharger la page
@@ -84,7 +84,7 @@
 
             <div class="relative mt-5 border-t border-zinc-200 pt-4">
                 <x-ui.button :href="route('planning.summary')" size="touch" class="w-full sm:w-auto">
-                    Ma fiche récapitulative
+                    Voir mon planning
                 </x-ui.button>
             </div>
         </section>

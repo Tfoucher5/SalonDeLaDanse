@@ -25,8 +25,8 @@
             <ul class="mt-3 space-y-1 text-sm">
                 @foreach ([
                     'dashboard' => 'Tableau de bord',
-                    'planning.index' => 'Planning des créneaux',
-                    'planning.summary' => 'Ma fiche bénévole',
+                    'planning.index' => 'Réservation de créneaux',
+                    'planning.summary' => 'Mon planning',
                     'profile.edit' => 'Mon profil',
                 ] as $routeName => $label)
                     <li>

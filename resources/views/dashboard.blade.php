@@ -27,14 +27,14 @@
 
                 <div class="flex w-full shrink-0 flex-col gap-2 sm:flex-row md:w-auto">
                     <x-ui.button :href="route('planning.summary')" size="touch" class="w-full sm:w-auto">
-                        Ma fiche
+                        Mon planning
                     </x-ui.button>
 
                     <x-ui.button :href="route('planning.index')" variant="primary" size="touch" class="w-full sm:w-auto">
                         <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M7 3v3m10-3v3M4 9h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1z" />
                         </svg>
-                        Accéder au planning
+                        Réserver des créneaux
                         <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd" d="M10.3 4.3a1 1 0 011.4 0l5 5a1 1 0 010 1.4l-5 5a1 1 0 01-1.4-1.4L13.6 11H4a1 1 0 110-2h9.6l-3.3-3.3a1 1 0 010-1.4z" clip-rule="evenodd" />
                         </svg>

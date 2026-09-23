@@ -10,9 +10,9 @@
     $sections = [
         ['label' => 'Tableau de bord', 'short' => 'Accueil', 'route' => 'dashboard', 'active' => request()->routeIs('dashboard'),
             'icon' => 'M3 10.5L12 3l9 7.5V20a1 1 0 01-1 1h-5v-6h-6v6H4a1 1 0 01-1-1v-9.5z'],
-        ['label' => 'Planning des créneaux', 'short' => 'Planning', 'route' => 'planning.index', 'active' => request()->routeIs('planning.index'),
+        ['label' => 'Réservation de créneaux', 'short' => 'Réservation', 'route' => 'planning.index', 'active' => request()->routeIs('planning.index'),
             'icon' => 'M7 3v3m10-3v3M4 9h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1zm3 8h3v3H8v-3z'],
-        ['label' => 'Ma fiche', 'short' => 'Ma fiche', 'route' => 'planning.summary', 'active' => request()->routeIs('planning.summary'),
+        ['label' => 'Mon planning', 'short' => 'Mon planning', 'route' => 'planning.summary', 'active' => request()->routeIs('planning.summary'),
             'icon' => 'M9 12h6m-6 4h6M7 3h7l5 5v12a1 1 0 01-1 1H7a1 1 0 01-1-1V4a1 1 0 011-1zm7 0v5h5'],
         ['label' => 'Mon profil', 'short' => 'Profil', 'route' => 'profile.edit', 'active' => request()->routeIs('profile.*'),
             'icon' => 'M12 12a4 4 0 100-8 4 4 0 000 8zm-7 9a7 7 0 0114 0'],

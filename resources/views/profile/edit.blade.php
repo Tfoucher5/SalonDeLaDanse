@@ -47,7 +47,7 @@
 
                 <x-slot name="footer">
                     <a href="{{ route('planning.summary') }}" class="inline-flex min-h-touch items-center gap-1.5 text-sm font-bold text-primary hover:text-primary-hover">
-                        Voir ma fiche bénévole
+                        Voir mon planning
                         <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
                             <path fill-rule="evenodd" d="M7.3 4.3a1 1 0 011.4 0l5 5a1 1 0 010 1.4l-5 5a1 1 0 01-1.4-1.4L11.6 10 7.3 5.7a1 1 0 010-1.4z" clip-rule="evenodd" />
                         </svg>
