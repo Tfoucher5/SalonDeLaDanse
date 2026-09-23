@@ -1,15 +1,33 @@
+@php
+    // Le profil est le seul ecran commun aux deux roles. L administrateur n a
+    // pas de planning : le retour le ramene chez lui, et le recapitulatif de
+    // participation ne le concerne pas.
+    //
+    // Les libelles sont calcules ici : une apostrophe dans une expression
+    // `:attr="..."` de Blade casse la compilation de la vue.
+    $isAdmin = $user->isAdmin();
+    $backLabel = $isAdmin ? "Vue d'ensemble" : 'Tableau de bord';
+    $eyebrow = $isAdmin ? 'Administration' : 'Espace bénévole';
+    $subtitle = $isAdmin
+        ? 'Vos informations personnelles.'
+        : "Vos informations personnelles et l'état de votre participation.";
+@endphp
+
 <x-app-layout :title="__('Profile')">
     <x-slot name="header">
         <x-ui.page-header
             :title="__('Profile')"
-            :back="route('dashboard')"
-            back-label="Tableau de bord"
-            eyebrow="Espace bénévole"
-            subtitle="Vos informations personnelles et l'état de votre participation." />
+            :back="route($user->homeRoute())"
+            :back-label="$backLabel"
+            :eyebrow="$eyebrow"
+            :subtitle="$subtitle" />
     </x-slot>
 
-    <div class="grid items-start gap-5 sm:gap-6 lg:grid-cols-3">
-        <div class="lg:col-span-2">
+    <div @class([
+        'grid items-start gap-5 sm:gap-6',
+        'lg:grid-cols-3' => ! $isAdmin,
+    ])>
+        <div @class(['lg:col-span-2' => ! $isAdmin])>
             @can('updatePersonalInformation', $user)
                 @include('profile.partials.update-profile-information-form')
             @else
@@ -20,6 +38,7 @@
         <div class="space-y-5 sm:space-y-6">
             {{-- Recapitulatif de participation : l'etat du planning, a portee
                  depuis le profil sans repasser par le tableau de bord. --}}
+            @unless ($isAdmin)
             <x-ui.card title="Ma participation" :kicker="$edition?->name">
                 <x-slot name="actions">
                     <x-ui.badge :tone="$state->tone()" dot>{{ $state->label() }}</x-ui.badge>
@@ -54,6 +73,7 @@
                     </a>
                 </x-slot>
             </x-ui.card>
+            @endunless
 
             <x-ui.alert title="Mot de passe">
                 Pour en changer, déconnectez-vous puis utilisez « Mot de passe oublié ? »

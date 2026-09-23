@@ -78,7 +78,9 @@ Ombres nommées uniquement, teintées prune : `shadow-card` (surfaces), `shadow-
 
 Une page se compose avec `resources/views/components/ui/` (`button`, `card` avec `kicker`
 et slot `icon`, `page-header`, `badge`, `alert`, `field`, `readonly-field`, `data-list`,
-`data-row`, `stat`, `gauge`, `table`, `empty`, `container`, `avatar`, `brand`). Si un
+`data-row`, `stat`, `gauge`, `table`, `empty`, `container`, `avatar`, `brand`, `select`,
+`pagination`, `confirm-form`). Le back-office ajoute les siens dans
+`components/admin/` (`volunteer-filters`, `shift-roster`, `mission-form`). Si un
 besoin n'a pas de composant, on ajoute le composant. La planche `/design-system` (hors
 production, authentifiée) montre le kit.
 

@@ -113,10 +113,12 @@ function creneau(
     string $date = '2027-05-14',
     int $capacity = 4,
     bool $restricted = false,
+    bool $closed = false,
 ): Shift {
     $mission = Mission::factory()
         ->when($restricted, fn ($factory) => $factory->restricted())
-        ->create(['edition_id' => $edition->id]);
+        ->when($closed, fn ($factory) => $factory->closed())
+        ->create(['edition_id' => $edition->id, 'default_capacity' => $capacity]);
 
     return Shift::factory()->withCapacity($capacity)->create([
         'edition_id' => $edition->id,
@@ -129,6 +131,17 @@ function creneau(
 function benevole(Edition $edition): User
 {
     return User::factory()->forEdition($edition)->create();
+}
+
+/**
+ * Un administrateur. Sans edition, le compte n en recoit aucune : c est ce qui
+ * permet de tester le back-office quand la base n a pas encore d edition.
+ */
+function administrateur(?Edition $edition = null): User
+{
+    $factory = User::factory()->admin();
+
+    return ($edition === null ? $factory : $factory->forEdition($edition))->create();
 }
 
 function rules(): PlanningRules

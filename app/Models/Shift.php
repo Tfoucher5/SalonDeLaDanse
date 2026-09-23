@@ -116,11 +116,15 @@ class Shift extends Model
     }
 
     /**
-     * Creneaux des missions ouvertes a la reservation.
+     * Creneaux des missions encore proposees au benevole.
+     *
+     * Publique et active : une mission desactivee cesse d etre offerte, meme
+     * si elle reste publique. L exclusion se fait par la requete, jamais a
+     * l affichage.
      */
     #[Scope]
-    protected function onPublicMissions(Builder $query): void
+    protected function onBookableMissions(Builder $query): void
     {
-        $query->whereHas('mission', fn (Builder $mission) => $mission->where('is_public', true));
+        $query->whereHas('mission', fn (Builder $mission) => $mission->bookable());
     }
 }

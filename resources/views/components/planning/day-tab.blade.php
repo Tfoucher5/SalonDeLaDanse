@@ -9,9 +9,15 @@
     'day',
     'index' => 0,
     'selected' => false,
+    'route' => 'planning.index',
+    'params' => [],
 ])
 
-<a href="{{ route('planning.index', ['day' => $day->toDateString()]) }}"
+{{-- Le back-office reutilise ces onglets sur sa propre route : le jour reste
+     le premier niveau de lecture des deux cotes. Les attributs `data-day-*`
+     ne servent qu'a la grille benevole, ou `planning.js` intercepte le clic
+     pour changer de jour sans rechargement ; ailleurs, ils sont inertes. --}}
+<a href="{{ route($route, ['day' => $day->toDateString()] + $params) }}"
    data-day-link
    data-day-index="{{ $index }}"
    @if ($selected) aria-current="page" @endif

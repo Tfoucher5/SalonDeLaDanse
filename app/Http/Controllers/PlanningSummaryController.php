@@ -42,7 +42,7 @@ class PlanningSummaryController extends Controller
     private function shiftsByDay(User $user): Collection
     {
         return $user->shifts()
-            ->with(['mission:id,name,instructions,position', 'timeSlot:id,starts_at,ends_at,position'])
+            ->with(['mission:id,name,instructions,position,is_public,is_active', 'timeSlot:id,starts_at,ends_at,position'])
             ->get()
             ->sortBy(fn (Shift $shift): string => $shift->date->toDateString().'#'.str_pad(
                 (string) $shift->timeSlot->position, 2, '0', STR_PAD_LEFT

@@ -61,8 +61,14 @@ it('n utilise que les ombres nommees de la charte', function () {
     // ombres generiques de Tailwind, grises, saliraient la surface porcelaine.
     expect(viewsMatching('/\bshadow-(?!(?:card|lift|cta|overlay)\b)[a-z0-9-]+/'))->toBe([]);
 
-    expect(viewsMatching('/\bshadow-overlay\b/'))
-        ->toBe(['components/dropdown.blade.php', 'components/modal.blade.php', 'components/ui/toast.blade.php']);
+    // `shadow-overlay` reste reservee a ce qui flotte vraiment : menu
+    // deroulant, modales de confirmation et notifications.
+    expect(viewsMatching('/\bshadow-overlay\b/'))->toBe([
+        'components/dropdown.blade.php',
+        'components/modal.blade.php',
+        'components/ui/confirm-form.blade.php',
+        'components/ui/toast.blade.php',
+    ]);
 });
 
 it('declare les tokens de la charte dans la configuration Tailwind', function () {

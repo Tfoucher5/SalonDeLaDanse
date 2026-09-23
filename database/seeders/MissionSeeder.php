@@ -44,6 +44,7 @@ class MissionSeeder extends Seeder
                 [
                     'name' => $name,
                     'is_public' => $isPublic,
+                    'default_capacity' => config('salon.seed.default_shift_capacity'),
                     'position' => $position + 1,
                 ],
             );

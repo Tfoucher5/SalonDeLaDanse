@@ -56,7 +56,10 @@ class VolunteerSeeder extends Seeder
             return;
         }
 
-        $shifts = $edition->shifts()->onPublicMissions()->with('mission')->get();
+        // `onBookableMissions` remplace `onPublicMissions` : une mission
+        // desactivee n est plus proposee, le seeder ne doit pas y inscrire
+        // quelqu un que les regles refuseraient ensuite.
+        $shifts = $edition->shifts()->onBookableMissions()->with('mission')->get();
 
         for ($i = 0; $i < $missing; $i++) {
             $volunteer = $this->createVolunteer($edition);

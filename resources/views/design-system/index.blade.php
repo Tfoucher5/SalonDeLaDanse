@@ -130,6 +130,20 @@
             <x-ui.field label="Champ désactivé" for="demo-disabled">
                 <x-text-input id="demo-disabled" type="text" value="Verrouillé" disabled />
             </x-ui.field>
+
+            <x-ui.field label="Mission" for="demo-select" hint="Filtre du back-office.">
+                <x-ui.select id="demo-select">
+                    <option>Toutes les missions</option>
+                    <option>Accueil exposants</option>
+                    <option>Billetterie (restreinte)</option>
+                </x-ui.select>
+            </x-ui.field>
+
+            <x-ui.field label="Liste désactivée" for="demo-select-disabled">
+                <x-ui.select id="demo-select-disabled" disabled>
+                    <option>Aucune édition active</option>
+                </x-ui.select>
+            </x-ui.field>
         </div>
     </x-ui.card>
 
@@ -167,6 +181,10 @@
                 </tr>
             @endforeach
         </x-ui.table>
+    </x-ui.card>
+
+    <x-ui.card title="Pagination" subtitle="Deux commandes et un compteur : la recherche fait le reste.">
+        <x-ui.pagination :paginator="$paginator" />
     </x-ui.card>
 
     <x-ui.card title="Absence de données">

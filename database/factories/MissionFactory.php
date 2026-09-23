@@ -24,6 +24,8 @@ class MissionFactory extends Factory
             'name' => Str::ucfirst($name),
             'slug' => Str::slug($name),
             'is_public' => true,
+            'is_active' => true,
+            'default_capacity' => config('salon.seed.default_shift_capacity'),
             'instructions' => null,
             'position' => fake()->numberBetween(1, 20),
         ];
@@ -36,6 +38,16 @@ class MissionFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'is_public' => false,
+        ]);
+    }
+
+    /**
+     * Mission fermee : plus proposee, mais ses inscrits gardent leur poste.
+     */
+    public function closed(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => false,
         ]);
     }
 }

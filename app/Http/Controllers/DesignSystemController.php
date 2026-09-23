@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Contracts\View\View;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Planche de reference de la charte graphique.
@@ -38,6 +39,9 @@ class DesignSystemController extends Controller
                 ['gauge-full', '#716B70', 'Complet ou indisponible', 'bg-gauge-full'],
                 ['danger', '#B91C1C', 'Erreur de validation, action destructrice', 'bg-danger'],
             ],
+            // Un paginateur de demonstration : la planche montre le composant
+            // dans son etat le plus courant, une page au milieu d'une liste.
+            'paginator' => new LengthAwarePaginator(range(1, 25), 130, 25, 2, ['path' => url()->current()]),
         ]);
     }
 }
