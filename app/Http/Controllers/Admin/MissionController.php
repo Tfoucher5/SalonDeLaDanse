@@ -31,7 +31,7 @@ class MissionController extends Controller
             'edition' => $edition,
             'missions' => $edition === null
                 ? collect()
-                : $edition->missions()->withCount(['shifts', 'assignments'])->get(),
+                : $edition->missions()->withCount(['shifts', 'assignments'])->withSum('shifts', 'capacity')->get(),
         ]);
     }
 

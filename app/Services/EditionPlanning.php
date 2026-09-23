@@ -33,7 +33,7 @@ class EditionPlanning
             ->with([
                 'mission:id,name,is_public,is_active,instructions,position',
                 'timeSlot:id,starts_at,ends_at,position',
-                'volunteers:id,first_name,last_name,photo_path',
+                'volunteers:id,first_name,last_name,photo_path,planning_validated_at',
             ])
             ->when($missionId, fn (Builder $query, int $mission) => $query->where('mission_id', $mission))
             ->when($day, fn (Builder $query, string $date) => $query->where('date', $date))

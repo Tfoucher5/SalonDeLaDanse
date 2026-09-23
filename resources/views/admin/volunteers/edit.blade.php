@@ -3,13 +3,9 @@
         <x-ui.page-header
             :title="$volunteer->full_name"
             :eyebrow="$edition?->name"
-            subtitle="Informations personnelles verrouillées pour le bénévole, modifiables ici.">
-            <x-slot name="actions">
-                <x-ui.button :href="route('admin.volunteers.show', $volunteer)" variant="ghost">
-                    Retour à la fiche
-                </x-ui.button>
-            </x-slot>
-        </x-ui.page-header>
+            :back="route('admin.volunteers.show', $volunteer)"
+            back-label="Fiche bénévole"
+            subtitle="Informations personnelles verrouillées pour le bénévole, modifiables ici." />
     </x-slot>
 
     <x-ui.alert>

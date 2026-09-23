@@ -7,6 +7,8 @@ export default {
         './vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php',
         './storage/framework/views/*.php',
         './resources/views/**/*.blade.php',
+        // Les enumerations portent des classes de couleur (StaffingLevel).
+        './app/Enums/**/*.php',
     ],
 
     theme: {

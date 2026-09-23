@@ -44,16 +44,9 @@
                 </x-ui.container>
             </main>
 
-            <footer class="mt-auto border-t border-zinc-900/5 bg-white print-hidden">
-                <x-ui.container :size="$width" class="flex flex-wrap items-center justify-between gap-2 py-6 text-sm text-zinc-500">
-                    <p>{{ config('app.name') }} — JayDance Fam</p>
-
-                    <p class="flex flex-wrap items-center gap-4">
-                        <a class="hover:text-zinc-900" href="{{ route('legal.notice') }}">Mentions légales</a>
-                        <span>Back-office</span>
-                    </p>
-                </x-ui.container>
-            </footer>
+            {{-- Toujours a la largeur de la navigation : le pied de page ne
+                 doit pas changer de taille d'un ecran a l'autre. --}}
+            @include('layouts.partials.admin-footer', ['width' => 'xl'])
         </div>
     </body>
 </html>

@@ -6,10 +6,20 @@ use App\Models\InvitationCode;
 use App\Models\User;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\VolunteerSeeder;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 beforeEach(function () {
     config()->set('salon.admin.email', null);
     config()->set('salon.seed.volunteers', 40);
+
+    // Aucun appel reseau reel : les portraits sont simules. `portraitsDown`
+    // permet a un test de couper le service apres coup.
+    $this->portraitsDown = false;
+    Storage::fake('public');
+    Http::fake(fn () => $this->portraitsDown
+        ? Http::response('', 503)
+        : Http::response('jpeg', 200, ['Content-Type' => 'image/jpeg']));
 
     $this->seed(DatabaseSeeder::class);
     $this->seed(VolunteerSeeder::class);
@@ -73,4 +83,21 @@ it('peut etre rejoue sans creer de doublons', function () {
     $this->seed(VolunteerSeeder::class);
 
     expect(User::query()->where('email', 'like', '%@'.VolunteerSeeder::EMAIL_DOMAIN)->count())->toBe(40);
+});
+
+it('donne une photo de profil a chaque benevole fictif', function () {
+    $this->volunteers->each(function (User $volunteer): void {
+        expect($volunteer->photo_path)->toStartWith(config('salon.photo.directory').'/');
+
+        Storage::disk('public')->assertExists($volunteer->photo_path);
+    });
+});
+
+it('cree le benevole sans photo quand le service de portraits ne repond pas', function () {
+    $this->portraitsDown = true;
+    config()->set('salon.seed.volunteers', 41);
+
+    $this->seed(VolunteerSeeder::class);
+
+    expect(User::query()->where('email', 'like', '%@'.VolunteerSeeder::EMAIL_DOMAIN)->latest('id')->first()->photo_path)->toBeNull();
 });

@@ -33,17 +33,6 @@
     $capacity = max(0, $shift->capacity);
     $isBlocked = ! $booked && $motive !== null;
 
-    // Au-dela de huit places, des segments deviendraient illisibles sur un
-    // telephone : la jauge passe alors en barre continue.
-    $segmented = $capacity > 0 && $capacity <= 8;
-    $percent = $capacity > 0 ? (int) round($remaining / $capacity * 100) : 0;
-
-    $segmentColor = match ($gauge) {
-        GaugeLevel::Free => 'bg-gauge-free',
-        GaugeLevel::Tight => 'bg-gauge-tight',
-        GaugeLevel::Full => 'bg-zinc-200',
-    };
-
     $surface = match (true) {
         $booked => 'bg-white shadow-card ring-2 ring-gauge-free/50',
         $isBlocked => 'bg-zinc-50 ring-1 ring-zinc-900/5',
@@ -72,18 +61,8 @@
             @endif
         </div>
 
-        <div class="flex items-center gap-1.5" role="img"
-             aria-label="{{ $gauge->label($remaining) }} sur {{ $capacity }}">
-            @if ($segmented)
-                @for ($segment = 1; $segment <= $capacity; $segment++)
-                    <span class="h-1.5 flex-1 rounded-full {{ $segment <= $remaining ? $segmentColor : 'bg-zinc-200' }}"></span>
-                @endfor
-            @else
-                <span class="h-1.5 flex-1 overflow-hidden rounded-full bg-zinc-200">
-                    <span class="block h-full rounded-full {{ $segmentColor }}" style="width: {{ $percent }}%"></span>
-                </span>
-            @endif
-        </div>
+        <x-ui.segment-gauge :remaining="$remaining" :capacity="$capacity" :level="$gauge->value"
+                            :label="$gauge->label($remaining).' sur '.$capacity" />
 
         <h3 class="py-3 text-lg font-bold leading-snug tracking-tight {{ $isBlocked ? 'text-zinc-500' : 'text-zinc-900' }}">
             {{ $shift->mission->name }}

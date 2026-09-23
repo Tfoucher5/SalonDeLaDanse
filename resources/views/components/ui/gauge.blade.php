@@ -18,6 +18,8 @@
         'free' => ['text' => 'text-gauge-free', 'bar' => 'bg-gauge-free'],
         'tight' => ['text' => 'text-gauge-tight', 'bar' => 'bg-gauge-tight'],
         'full' => ['text' => 'text-gauge-full', 'bar' => 'bg-zinc-400'],
+        // Poste a pourvoir, lu par l'equipe organisatrice (StaffingLevel).
+        'danger' => ['text' => 'text-danger', 'bar' => 'bg-danger/70'],
     ];
 
     $color = $colors[$level] ?? $colors['free'];

@@ -22,7 +22,12 @@
       x-data="liveFilters('{{ $target }}')"
       :aria-busy="busy"
       class="space-y-4">
-    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {{-- Sur telephone, seul le nom reste visible : les trois listes se
+         deplient a la demande, pour que les resultats arrivent sans
+         defiler un ecran entier. Deja ouvertes si l'une d'elles filtre. --}}
+    @php $refinements = collect($criteria)->only(['mission', 'status', 'day'])->filter()->count(); @endphp
+
+    <div x-data="{ more: {{ $refinements > 0 ? 'true' : 'false' }} }" class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <x-ui.field label="Nom ou prénom" for="filtre-nom">
             {{-- La saisie libre attend une pause dans la frappe ; les listes
                  deroulantes partent des la selection. --}}
@@ -32,7 +37,22 @@
                           x-on:input.debounce.400ms="refresh()" />
         </x-ui.field>
 
-        <x-ui.field label="Mission" for="filtre-mission" :messages="$errors->get('mission')">
+        <button type="button" x-cloak x-on:click="more = ! more"
+                class="flex h-11 items-center justify-between rounded-xl bg-zinc-100 px-4 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-200/70 sm:hidden"
+                x-bind:aria-expanded="more">
+            <span>
+                Plus de filtres
+                @if ($refinements > 0)
+                    <span class="ms-1 rounded-full bg-primary px-2 py-0.5 text-xs text-white">{{ $refinements }}</span>
+                @endif
+            </span>
+
+            <svg class="h-4 w-4 text-zinc-500 transition" x-bind:class="more && 'rotate-180'" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path fill-rule="evenodd" d="M5.3 7.3a1 1 0 011.4 0L10 10.6l3.3-3.3a1 1 0 111.4 1.4l-4 4a1 1 0 01-1.4 0l-4-4a1 1 0 010-1.4z" clip-rule="evenodd" />
+            </svg>
+        </button>
+
+        <x-ui.field label="Mission" for="filtre-mission" :messages="$errors->get('mission')" x-bind:class="! more && 'max-sm:hidden'">
             <x-ui.select x-on:change="refresh()" id="filtre-mission" name="mission">
                 <option value="">Toutes les missions</option>
 
@@ -44,15 +64,15 @@
             </x-ui.select>
         </x-ui.field>
 
-        <x-ui.field label="Statut du planning" for="filtre-statut" :messages="$errors->get('status')">
+        <x-ui.field label="Statut du planning" for="filtre-statut" :messages="$errors->get('status')" x-bind:class="! more && 'max-sm:hidden'">
             <x-ui.select x-on:change="refresh()" id="filtre-statut" name="status">
                 <option value="">Tous les statuts</option>
                 <option value="validated" @selected($criteria['status'] === 'validated')>Validé</option>
-                <option value="pending" @selected($criteria['status'] === 'pending')>En attente</option>
+                <option value="pending" @selected($criteria['status'] === 'pending')>Non validé</option>
             </x-ui.select>
         </x-ui.field>
 
-        <x-ui.field label="Jour" for="filtre-jour" :messages="$errors->get('day')">
+        <x-ui.field label="Jour" for="filtre-jour" :messages="$errors->get('day')" x-bind:class="! more && 'max-sm:hidden'">
             <x-ui.select x-on:change="refresh()" id="filtre-jour" name="day">
                 <option value="">Tous les jours</option>
 

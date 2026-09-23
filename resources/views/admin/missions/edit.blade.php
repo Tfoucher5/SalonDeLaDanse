@@ -3,15 +3,13 @@
         <x-ui.page-header
             :title="$mission->name"
             :eyebrow="$edition?->name"
+            :back="route('admin.missions.index')"
+            back-label="Missions"
             subtitle="Jauge, consignes et disponibilité de la mission.">
             <x-slot name="actions">
                 <x-ui.badge :tone="$mission->is_active ? 'free' : 'full'">
                     {{ $mission->is_active ? 'Active' : 'Fermée' }}
                 </x-ui.badge>
-
-                <x-ui.button :href="route('admin.missions.index')" variant="ghost">
-                    Retour aux missions
-                </x-ui.button>
             </x-slot>
         </x-ui.page-header>
     </x-slot>
