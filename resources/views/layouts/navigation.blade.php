@@ -47,7 +47,7 @@
                 </x-slot>
 
                 <x-slot name="content">
-                    <div class="border-b border-zinc-200 px-4 py-3">
+                    <div class="mb-1 border-b border-zinc-200 px-2.5 pb-3 pt-2">
                         <p class="truncate text-sm font-semibold text-zinc-900">{{ Auth::user()->full_name }}</p>
                         <p class="truncate text-sm text-zinc-500">{{ Auth::user()->email }}</p>
                     </div>

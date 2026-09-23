@@ -10,6 +10,10 @@ use App\Models\User;
 use App\Services\PlanningRules;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class VolunteerSeeder extends Seeder
 {
@@ -82,7 +86,8 @@ class VolunteerSeeder extends Seeder
      */
     private function createVolunteer(Edition $edition): User
     {
-        $firstName = fake()->firstName();
+        $gender = fake()->randomElement(['male', 'female']);
+        $firstName = fake()->firstName($gender);
         $lastName = fake()->lastName();
 
         $volunteer = User::factory()->forEdition($edition)->create([
@@ -90,11 +95,46 @@ class VolunteerSeeder extends Seeder
             'last_name' => $lastName,
             'email' => str($firstName.'.'.$lastName)->ascii()->lower()->replaceMatches('/[^a-z.]/', '')
                 .'.'.fake()->unique()->numberBetween(100, 9999).'@'.self::EMAIL_DOMAIN,
+            'photo_path' => $this->fakePhoto($gender),
         ]);
 
         InvitationCode::factory()->used($volunteer)->create(['edition_id' => $edition->id]);
 
         return $volunteer;
+    }
+
+    /**
+     * Une photo de profil fictive, rangee comme une vraie photo d'inscription
+     * (disque public, dossier des photos benevoles).
+     *
+     * Les portraits viennent de randomuser.me, service de donnees de test :
+     * sans reseau, le benevole est simplement cree sans photo, et ses
+     * initiales prennent le relais a l'ecran.
+     */
+    private function fakePhoto(string $gender): ?string
+    {
+        $url = sprintf(
+            'https://randomuser.me/api/portraits/%s/%d.jpg',
+            $gender === 'female' ? 'women' : 'men',
+            fake()->numberBetween(0, 99),
+        );
+
+        try {
+            // IPv4 impose : sur certains postes, la route IPv6 expire sans repondre.
+            $response = Http::withOptions(['force_ip_resolve' => 'v4'])->timeout(5)->get($url);
+        } catch (ConnectionException) {
+            return null;
+        }
+
+        if (! $response->successful() || ! str_starts_with((string) $response->header('Content-Type'), 'image/')) {
+            return null;
+        }
+
+        $path = config('salon.photo.directory').'/'.Str::uuid().'.jpg';
+
+        Storage::disk('public')->put($path, $response->body());
+
+        return $path;
     }
 
     /**

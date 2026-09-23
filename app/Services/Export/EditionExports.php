@@ -80,7 +80,7 @@ class EditionExports
                 $entry['volunteer']->email,
                 $entry['volunteer']->phone,
                 $entry['shift']->pivot->assigned_by_admin ? 'Équipe organisatrice' : 'Bénévole',
-                PlanningState::for($entry['volunteer'], $edition)->label(),
+                PlanningState::for($entry['volunteer'], $edition)->adminLabel(),
             ])
             ->values()
             ->all();
@@ -149,7 +149,7 @@ class EditionExports
                 $volunteer->phone,
                 $volunteer->birth_date?->format('d/m/Y') ?? '',
                 (int) $volunteer->assignments_count,
-                PlanningState::for($volunteer, $edition)->label(),
+                PlanningState::for($volunteer, $edition)->adminLabel(),
                 $volunteer->planning_validated_at?->format('d/m/Y H:i') ?? '',
                 $volunteer->created_at?->format('d/m/Y H:i') ?? '',
             ])

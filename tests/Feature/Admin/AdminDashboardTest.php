@@ -145,7 +145,7 @@ it('affiche les compteurs sur la vue d ensemble', function () {
         ->assertSee('Bénévoles attendus')
         ->assertSee('Comptes créés')
         ->assertSee('Plannings validés')
-        ->assertSee('Plannings en attente')
+        ->assertSee('Plannings non validés')
         ->assertSee('Accueil exposants')
         ->assertSee('25 % de remplissage')
         ->assertSee('Vendredi 14 mai');

@@ -49,15 +49,15 @@
                 :messages="$errors->get('instructions')"
                 hint="Affichées sur la fiche récapitulative du bénévole. Facultatives.">
         <textarea id="instructions" name="instructions" rows="4" maxlength="2000"
-                  class="w-full rounded-xl border-zinc-200 text-sm text-zinc-900 focus:border-primary focus:ring-2 focus:ring-primary-ring">{{ old('instructions', $mission?->instructions) }}</textarea>
+                  class="w-full rounded-xl border-zinc-900/15 bg-white px-4 py-3 text-[0.9375rem] text-zinc-900 placeholder-zinc-400 transition focus:border-primary-bright focus:ring-4 focus:ring-primary-bright/15">{{ old('instructions', $mission?->instructions) }}</textarea>
     </x-ui.field>
 
     {{-- Les deux interrupteurs de la mission. Ils ne disent pas la meme chose :
          l'un dit qui peut reserver, l'autre si la mission existe encore. --}}
-    <fieldset class="space-y-3 rounded-2xl p-4 ring-1 ring-zinc-900/5">
-        <legend class="px-1 text-sm font-medium text-zinc-500">Disponibilité</legend>
+    <fieldset class="space-y-2">
+        <legend class="mb-2 text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-zinc-500">Disponibilité</legend>
 
-        <label class="flex items-start gap-3" for="is_public">
+        <label class="flex cursor-pointer items-start gap-3 rounded-xl bg-zinc-50 p-4 ring-1 ring-zinc-900/5 transition hover:bg-white has-[:checked]:bg-white has-[:checked]:ring-primary/30" for="is_public">
             <input type="hidden" name="is_public" value="0">
             <input id="is_public" name="is_public" type="checkbox" value="1"
                    @checked(old('is_public', $mission?->is_public ?? true))
@@ -72,7 +72,7 @@
             </span>
         </label>
 
-        <label class="flex items-start gap-3" for="is_active">
+        <label class="flex cursor-pointer items-start gap-3 rounded-xl bg-zinc-50 p-4 ring-1 ring-zinc-900/5 transition hover:bg-white has-[:checked]:bg-white has-[:checked]:ring-primary/30" for="is_active">
             <input type="hidden" name="is_active" value="0">
             <input id="is_active" name="is_active" type="checkbox" value="1"
                    @checked(old('is_active', $mission?->is_active ?? true))

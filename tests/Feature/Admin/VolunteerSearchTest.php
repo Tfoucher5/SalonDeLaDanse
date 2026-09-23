@@ -112,9 +112,10 @@ it('affiche le nombre de creneaux de chaque benevole', function () {
         'shift_id' => creneau($this->edition, position: 5, date: '2027-05-16')->id,
     ]);
 
-    $content = chercher(['name' => 'Belkacem'])->assertOk()->getContent();
-
-    expect($content)->toContain('<td>2</td>');
+    // Le compteur se lit « retenus / maximum de l'edition ».
+    chercher(['name' => 'Belkacem'])
+        ->assertOk()
+        ->assertSee('2 / '.$this->edition->max_slots_per_volunteer);
 });
 
 it('mene a la fiche du benevole', function () {

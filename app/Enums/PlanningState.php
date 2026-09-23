@@ -79,6 +79,33 @@ enum PlanningState: string
     }
 
     /**
+     * Libellé vu par l'équipe organisatrice.
+     *
+     * Côté back-office, un brouillon est un planning qui attend sa
+     * validation : c'est ce qui reste à faire, pas l'état de travail du
+     * bénévole.
+     */
+    public function adminLabel(): string
+    {
+        return match ($this) {
+            self::Draft => 'Non validé',
+            default => $this->label(),
+        };
+    }
+
+    /**
+     * Ton du badge côté back-office : ce qui reste à valider ressort en rouge
+     * pastel, pour se repérer d'un coup d'œil dans une longue liste.
+     */
+    public function adminTone(): string
+    {
+        return match ($this) {
+            self::Draft => 'danger',
+            default => $this->tone(),
+        };
+    }
+
+    /**
      * Phrase expliquant l'état, affichée sous le libellé.
      */
     public function description(): string

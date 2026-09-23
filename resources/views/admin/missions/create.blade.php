@@ -3,13 +3,9 @@
         <x-ui.page-header
             title="Nouvelle mission"
             :eyebrow="$edition->name"
-            subtitle="Elle recevra un créneau sur chaque tranche horaire, tous les jours du Salon.">
-            <x-slot name="actions">
-                <x-ui.button :href="route('admin.missions.index')" variant="ghost">
-                    Retour aux missions
-                </x-ui.button>
-            </x-slot>
-        </x-ui.page-header>
+            :back="route('admin.missions.index')"
+            back-label="Missions"
+            subtitle="Elle recevra un créneau sur chaque tranche horaire, tous les jours du Salon." />
     </x-slot>
 
     <x-ui.card title="La mission">

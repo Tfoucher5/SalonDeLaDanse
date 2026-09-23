@@ -15,6 +15,12 @@ Ce qui ne change pas : **la couleur d'information reste distincte de la couleur
 d'action.** Les jauges (émeraude / ambre / gris) ne réutilisent jamais le terracotta.
 « Complet » est gris, jamais rouge. Toute couleur est doublée d'un mot.
 
+**Côté back-office, l'échelle s'inverse** (`AppnumsStaffingLevel`) : le but de
+l'équipe est de pourvoir chaque poste. Tout indicateur de remplissage va du rouge
+(`danger`, moins de la moitié pourvue) à l'ambre (`gauge-tight`, en cours) puis au vert
+(`gauge-free`, complet ou objectif atteint). Les jauges de places partent pleines et
+se vident à chaque inscription, comme côté bénévole.
+
 ## Palette (tokens `tailwind.config.js`)
 
 | Token | Hex | Usage |
