@@ -14,6 +14,8 @@ use Illuminate\Validation\Validator;
  */
 class ReleaseShiftRequest extends FormRequest
 {
+    use FocusesShiftOnFailure;
+
     public function authorize(): bool
     {
         return true;

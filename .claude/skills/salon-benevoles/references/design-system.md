@@ -84,7 +84,7 @@ production, authentifiée) montre le kit.
 
 `tests/Feature/DesignSystemTest.php` échoue sur : classe `dark:`, palette Tailwind hors
 tokens, hexadécimal dans une vue, `<button>`/champ en `rounded-full`, ombre non nommée,
-`shadow-overlay` hors menu déroulant et modale.
+`shadow-overlay` hors menu déroulant, modale et notification.
 
 ## Mobile first
 

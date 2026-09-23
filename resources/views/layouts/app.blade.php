@@ -27,19 +27,15 @@
                 </header>
             @endisset
 
-            {{-- Le padding bas laisse la place a la barre d'onglets mobile. --}}
-            <main id="contenu" class="flex-1 pb-28 pt-4 sm:pt-6 md:pb-12">
+            <main id="contenu" class="flex-1 pb-12 pt-4 sm:pt-6">
                 <x-ui.container :size="$width" class="space-y-5 sm:space-y-6">
                     {{ $slot }}
                 </x-ui.container>
             </main>
 
-            <footer class="mt-auto hidden border-t border-zinc-900/5 bg-white/60 md:block print-hidden">
-                <x-ui.container :size="$width" class="flex flex-wrap items-center justify-between gap-2 py-6 text-sm text-zinc-500">
-                    <p><span class="font-semibold text-zinc-900">{{ config('app.name') }}</span> — Coordination bénévoles</p>
-                    <p>JayDance Fam</p>
-                </x-ui.container>
-            </footer>
+            @include('layouts.partials.footer')
         </div>
+
+        @include('layouts.partials.toasts')
     </body>
 </html>

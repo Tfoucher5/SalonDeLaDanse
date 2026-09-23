@@ -19,7 +19,7 @@
     ];
 @endphp
 
-<nav class="sticky top-0 z-40 border-b border-zinc-900/5 bg-white/85 backdrop-blur-md print-hidden" aria-label="Navigation principale">
+<nav class="vt-site-nav sticky top-0 z-40 border-b border-zinc-900/5 bg-white/85 backdrop-blur-md print-hidden" aria-label="Navigation principale">
     <x-ui.container size="lg">
         <div class="flex h-16 items-center justify-between gap-4">
             <x-ui.brand :href="route('dashboard')" class="min-w-0" />
@@ -71,7 +71,7 @@
 </nav>
 
 {{-- Barre d'onglets mobile : quatre destinations, cibles tactiles de 56 px. --}}
-<nav class="fixed inset-x-0 bottom-0 z-40 border-t border-zinc-900/5 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden print-hidden"
+<nav class="vt-tab-bar fixed inset-x-0 bottom-0 z-40 border-t border-zinc-900/5 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden print-hidden"
      aria-label="Navigation mobile">
     <div class="mx-auto grid max-w-md grid-cols-4 gap-1 px-2 py-1.5">
         @foreach ($sections as $section)

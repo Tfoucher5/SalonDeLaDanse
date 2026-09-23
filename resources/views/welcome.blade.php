@@ -1,26 +1,23 @@
 <x-guest-layout width="sm:max-w-lg">
-    <h1 class="text-2xl font-semibold text-zinc-900">Espace bénévoles</h1>
-
-    <p class="mt-2 text-zinc-500">
-        Composez votre planning sur les trois jours du Salon, à votre rythme,
-        depuis votre téléphone.
-    </p>
+    <x-ui.form-heading
+        title="Espace bénévoles"
+        subtitle="Composez votre planning du Salon à votre rythme, depuis votre téléphone." />
 
     {{-- Le parcours en trois temps : un candidat retenu doit comprendre en un
          coup d'oeil pourquoi on lui demande un code. --}}
-    <ol class="mt-6 space-y-4 border-t border-zinc-200 pt-6">
+    <ol class="space-y-2">
         @foreach ([
-            ['Recevez votre code', "L'équipe organisatrice vous l'envoie par e-mail une fois votre candidature retenue."],
-            ['Créez votre compte', 'Le code ouvre le formulaire d\'inscription. Il ne sert qu\'une seule fois.'],
-            ['Choisissez vos créneaux', 'Entre 1 et 3 missions selon vos disponibilités, puis validez votre planning.'],
+            ['Recevez votre code', 'Envoyé par e-mail une fois votre candidature retenue.'],
+            ['Créez votre compte', 'Le code ne sert qu\'une seule fois.'],
+            ['Choisissez vos créneaux', 'Entre 1 et 3 missions selon vos disponibilités.'],
         ] as $index => [$title, $description])
-            <li class="flex gap-3">
-                <span class="tabular-grid flex h-7 w-7 shrink-0 items-center justify-center rounded-md border border-zinc-200 text-sm font-medium text-zinc-500">
+            <li class="flex items-center gap-3 rounded-xl bg-zinc-50 p-3">
+                <span class="tabular-grid flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-soft text-sm font-bold text-primary">
                     {{ $index + 1 }}
                 </span>
 
                 <div>
-                    <p class="font-medium text-zinc-900">{{ $title }}</p>
+                    <p class="font-semibold text-zinc-900">{{ $title }}</p>
                     <p class="mt-0.5 text-sm text-zinc-500">{{ $description }}</p>
                 </div>
             </li>
@@ -28,9 +25,9 @@
     </ol>
 
     @if (Route::has('login'))
-        <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+        <div class="mt-5 grid grid-cols-2 gap-3">
             @auth
-                <x-ui.button :href="url('/dashboard')" variant="primary" size="touch" class="sm:w-auto" block>
+                <x-ui.button :href="url('/dashboard')" variant="primary" size="touch" block class="col-span-2">
                     Accéder à mon espace
                 </x-ui.button>
             @else
@@ -40,7 +37,7 @@
 
                 @if (Route::has('register'))
                     <x-ui.button :href="route('register.code')" size="touch" block>
-                        Créer mon compte
+                        M'inscrire
                     </x-ui.button>
                 @endif
             @endauth

@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\User;
+use Illuminate\Support\Facades\Hash;
 
 it('affiche la page profil', function () {
     $this->actingAs(User::factory()->create())
@@ -8,13 +9,28 @@ it('affiche la page profil', function () {
         ->assertOk();
 });
 
-it('reduit la page profil au mot de passe pour un profil verrouille', function () {
+it('affiche un profil verrouille en lecture seule, sans aucun formulaire', function () {
     $response = $this->actingAs(User::factory()->create())->get('/profile');
 
     $response->assertOk()
-        ->assertSee('name="current_password"', escape: false)
+        ->assertSee('Lecture seule')
+        ->assertDontSee('name="current_password"', escape: false)
         ->assertDontSee('name="first_name"', escape: false)
         ->assertDontSee('name="email"', escape: false);
+});
+
+it('ne permet plus de changer son mot de passe depuis le profil', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->put('/password', [
+            'current_password' => 'password',
+            'password' => 'new-password',
+            'password_confirmation' => 'new-password',
+        ])
+        ->assertNotFound();
+
+    expect(Hash::check('password', $user->refresh()->password))->toBeTrue();
 });
 
 it('refuse toute modification des informations personnelles sur un profil verrouille', function () {

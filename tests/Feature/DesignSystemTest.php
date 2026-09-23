@@ -62,7 +62,7 @@ it('n utilise que les ombres nommees de la charte', function () {
     expect(viewsMatching('/\bshadow-(?!(?:card|lift|cta|overlay)\b)[a-z0-9-]+/'))->toBe([]);
 
     expect(viewsMatching('/\bshadow-overlay\b/'))
-        ->toBe(['components/dropdown.blade.php', 'components/modal.blade.php']);
+        ->toBe(['components/dropdown.blade.php', 'components/modal.blade.php', 'components/ui/toast.blade.php']);
 });
 
 it('declare les tokens de la charte dans la configuration Tailwind', function () {

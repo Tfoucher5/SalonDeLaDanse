@@ -7,10 +7,13 @@
 
 @props([
     'day',
+    'index' => 0,
     'selected' => false,
 ])
 
 <a href="{{ route('planning.index', ['day' => $day->toDateString()]) }}"
+   data-day-link
+   data-day-index="{{ $index }}"
    @if ($selected) aria-current="page" @endif
    {{ $attributes->merge(['class' => 'tabular-grid flex min-h-touch flex-1 flex-col items-center justify-center rounded-xl px-3 py-2 transition '.($selected
         ? 'bg-white text-primary shadow-card'

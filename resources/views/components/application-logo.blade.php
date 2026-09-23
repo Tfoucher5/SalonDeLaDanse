@@ -1,11 +1,11 @@
 {{--
-    Marque de la plateforme : une silhouette dansee, un trait terracotta et
-    une tete, sur une pastille adoucie. La teinte vive de marque ne sert qu'ici.
+    Logotype officiel du Salon, fourni en blanc sur transparent.
+
+    Il sert de masque plutot que d'image : la couleur vient de `currentColor`,
+    donc d'une classe `text-*` du design system. Le meme fichier s'ecrit ainsi
+    en encre sur la porcelaine, et en blanc sur un bandeau colore.
 --}}
 
-<svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
-     {{ $attributes->merge(['class' => 'shrink-0']) }}>
-    <rect width="40" height="40" rx="12" class="fill-primary-soft" />
-    <path d="M11 27c0 0 3.5-13 9-13s1.5 13 7 13c3 0 5-4 5-4" fill="none" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" class="stroke-primary-bright" />
-    <circle cx="20" cy="9.5" r="3.2" class="fill-primary-bright" />
-</svg>
+<span role="img" aria-label="{{ config('app.name') }}"
+      style="-webkit-mask: url('{{ asset('images/logo-salon-de-la-danse.png') }}') center / contain no-repeat; mask: url('{{ asset('images/logo-salon-de-la-danse.png') }}') center / contain no-repeat;"
+      {{ $attributes->merge(['class' => 'inline-block aspect-[1350/726] shrink-0 bg-current text-zinc-900']) }}></span>

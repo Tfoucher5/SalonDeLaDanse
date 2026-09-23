@@ -416,3 +416,20 @@ it('laisse le planning en brouillon sur un creneau choisi par le benevole', func
 
     $this->assertDatabaseCount('assignments', 2);
 });
+
+it('designe le creneau concerne pour que la grille revienne dessus', function () {
+    $edition = salon();
+    $shift = creneau($edition);
+    $user = benevole($edition);
+
+    $this->actingAs($user)
+        ->from(route('planning.index'))
+        ->post(route('planning.shifts.store', $shift))
+        ->assertSessionHas('focus_shift', $shift->id);
+
+    $this->actingAs($user)
+        ->from(route('planning.index'))
+        ->post(route('planning.shifts.store', $shift))
+        ->assertSessionHasErrors('shift')
+        ->assertSessionHas('focus_shift', $shift->id);
+});

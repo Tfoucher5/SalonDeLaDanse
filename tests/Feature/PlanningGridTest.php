@@ -249,3 +249,47 @@ it('reste consultable sans aucune edition en base', function () {
         ->assertOk()
         ->assertSee("Aucune édition n'est ouverte pour le moment.");
 });
+
+it('revient sur le creneau de la derniere action au lieu de remonter en haut', function () {
+    ['edition' => $edition, 'shift' => $shift] = grid();
+
+    $this->actingAs(User::factory()->forEdition($edition)->create())
+        ->withSession(['focus_shift' => $shift->id])
+        ->get('/planning')
+        ->assertSee('id="creneau-'.$shift->id.'"', escape: false)
+        ->assertSee('scrollIntoView', escape: false);
+});
+
+it('annonce l issue de la derniere action dans une notification', function () {
+    ['edition' => $edition] = grid();
+
+    $this->actingAs(User::factory()->forEdition($edition)->create())
+        ->withSession(['status' => 'Créneau ajouté à votre planning.'])
+        ->get('/planning')
+        ->assertSee('Créneau ajouté à votre planning.')
+        ->assertSee('Fermer la notification');
+});
+
+it('garde les cartes dans l ordre des missions, reservees ou non', function () {
+    ['edition' => $edition, 'slot' => $slot] = grid();
+
+    $mission = Mission::factory()->create([
+        'edition_id' => $edition->id,
+        'name' => 'Vestiaires',
+        'position' => 2,
+    ]);
+
+    $booked = Shift::factory()->create([
+        'edition_id' => $edition->id,
+        'mission_id' => $mission->id,
+        'time_slot_id' => $slot->id,
+        'date' => '2027-05-14',
+    ]);
+
+    $user = User::factory()->forEdition($edition)->create();
+    Assignment::factory()->create(['user_id' => $user->id, 'shift_id' => $booked->id]);
+
+    $this->actingAs($user)
+        ->get('/planning')
+        ->assertSeeInOrder(['Accueil exposants', 'Vestiaires']);
+});

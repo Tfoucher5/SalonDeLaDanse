@@ -1,27 +1,23 @@
-<x-guest-layout :title="__('Enter your invitation code')">
-    <h1 class="text-xl font-semibold text-zinc-900">
-        {{ __('Enter your invitation code') }}
-    </h1>
+<x-guest-layout :title="__('Enter your invitation code')" :back="url('/')" back-label="Accueil">
+    <x-ui.form-heading
+        step="Étape 1 sur 4"
+        :title="__('Enter your invitation code')"
+        :subtitle="__('The organising team sent you a code by email after your application was accepted. It can only be used once.')" />
 
-    <p class="mt-2 text-sm text-zinc-500">
-        {{ __('The organising team sent you a code by email after your application was accepted. It can only be used once.') }}
-    </p>
-
-    <form method="POST" action="{{ route('register.code') }}" class="mt-6 space-y-4">
+    <form method="POST" action="{{ route('register.code') }}" class="space-y-4">
         @csrf
 
         <x-ui.field :label="__('Invitation code')" for="code" :messages="$errors->get('code')" required>
             <x-text-input id="code" type="text" name="code" :value="old('code')"
-                          class="tabular-grid uppercase tracking-widest"
+                          class="tabular-grid text-center text-lg font-bold uppercase tracking-widest"
                           required autofocus autocomplete="off" placeholder="SALON-XXXXXX" />
         </x-ui.field>
 
-        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
-            <a class="rounded-md text-sm text-zinc-500 underline hover:text-zinc-900" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-ui.button variant="primary" size="touch">{{ __('Continue') }}</x-ui.button>
-        </div>
+        <x-ui.button variant="primary" size="touch" block>{{ __('Continue') }}</x-ui.button>
     </form>
+
+    <p class="mt-5 border-t border-zinc-200 pt-4 text-center text-sm text-zinc-500">
+        {{ __('Already registered?') }}
+        <a href="{{ route('login') }}" class="font-semibold text-primary hover:text-primary-hover">{{ __('Log in') }}</a>
+    </p>
 </x-guest-layout>
