@@ -9,8 +9,12 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="route('planning.index')" :active="request()->routeIs('planning.*')">
+                    <x-nav-link :href="route('planning.index')" :active="request()->routeIs('planning.index')">
                         Planning
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('planning.summary')" :active="request()->routeIs('planning.summary')">
+                        Ma fiche
                     </x-nav-link>
                 </div>
             </div>
@@ -72,8 +76,12 @@
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
 
-            <x-responsive-nav-link :href="route('planning.index')" :active="request()->routeIs('planning.*')">
+            <x-responsive-nav-link :href="route('planning.index')" :active="request()->routeIs('planning.index')">
                 Planning
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('planning.summary')" :active="request()->routeIs('planning.summary')">
+                Ma fiche
             </x-responsive-nav-link>
         </div>
 

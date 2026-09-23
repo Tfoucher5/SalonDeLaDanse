@@ -5,6 +5,10 @@
             :eyebrow="$edition?->name"
             :subtitle="$edition ? null : 'Aucune édition n\'est ouverte pour le moment.'">
             <x-slot name="actions">
+                <x-ui.button :href="route('planning.summary')" size="touch">
+                    Ma fiche
+                </x-ui.button>
+
                 <x-ui.button :href="route('planning.index')" variant="primary" size="touch">
                     Voir le planning
                 </x-ui.button>

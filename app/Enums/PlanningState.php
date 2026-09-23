@@ -84,7 +84,7 @@ enum PlanningState: string
     public function description(): string
     {
         return match ($this) {
-            self::Draft => 'Vous pouvez encore ajouter ou retirer des créneaux. Pensez à valider définitivement votre planning une fois vos choix arrêtés.',
+            self::Draft => "Vous pouvez encore ajouter ou retirer des créneaux. L'équipe organisatrice validera votre planning avant le Salon.",
             self::Validated => 'Votre planning est validé et verrouillé. Contactez l\'équipe organisatrice pour toute modification.',
             self::Locked => "L'équipe organisatrice vous a attribué un poste : votre planning est verrouillé. Contactez-la pour toute modification.",
             self::Closed => 'La composition des plannings est fermée. Le planning reste consultable, mais plus modifiable.',

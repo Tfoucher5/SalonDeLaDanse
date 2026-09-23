@@ -40,7 +40,7 @@ class DashboardController extends Controller
             'Deux missions ne peuvent pas se chevaucher : une seule mission par tranche horaire, quel que soit le jour.',
             'Trois tranches horaires consécutives le même jour sont interdites : une pause est obligatoire.',
             'Chaque créneau a un nombre de places limité. Une fois la jauge atteinte, le créneau se ferme.',
-            'Votre planning reste modifiable tant que vous ne l\'avez pas validé définitivement.',
+            "Votre planning reste modifiable tant que les inscriptions sont ouvertes et que l'équipe organisatrice ne l'a pas validé.",
         ];
     }
 }

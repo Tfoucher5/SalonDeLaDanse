@@ -27,21 +27,21 @@
             <x-ui.alert tone="danger">{{ $message }}</x-ui.alert>
         @enderror
 
+        @php
+            $booked = $bookedShiftIds->count();
+            $maximum = $edition->max_slots_per_volunteer;
+            $minimum = $edition->min_slots_per_volunteer;
+            $filled = $maximum > 0 ? (int) round(min($booked, $maximum) / $maximum * 100) : 0;
+        @endphp
+
         {{-- Ce que le benevole a deja retenu, tous jours confondus. --}}
         <x-ui.card title="Mes créneaux" subtitle="Tous jours confondus.">
-            @php
-                $booked = $bookedShiftIds->count();
-                $maximum = $edition->max_slots_per_volunteer;
-                $minimum = $edition->min_slots_per_volunteer;
-                $filled = $maximum > 0 ? (int) round(min($booked, $maximum) / $maximum * 100) : 0;
-            @endphp
-
             <p class="tabular-grid text-zinc-900">
                 {{ $booked }} créneau{{ $booked > 1 ? 'x' : '' }}
                 retenu{{ $booked > 1 ? 's' : '' }} sur {{ $maximum }} possibles.
 
                 @if ($booked < $minimum)
-                    Il vous en faut {{ $minimum }} au minimum pour valider votre planning.
+                    Vous vous êtes engagé sur {{ $minimum }} créneau{{ $minimum > 1 ? 'x' : '' }} au minimum.
                 @endif
             </p>
 
@@ -54,6 +54,12 @@
             @unless ($state->isEditable())
                 <x-ui.alert class="mt-4">{{ $state->description() }}</x-ui.alert>
             @endunless
+
+            <x-slot name="footer">
+                <x-ui.button :href="route('planning.summary')" size="touch">
+                    Ma fiche récapitulative
+                </x-ui.button>
+            </x-slot>
         </x-ui.card>
 
         {{-- Navigation par jour : le premier niveau de lecture sur mobile. --}}
