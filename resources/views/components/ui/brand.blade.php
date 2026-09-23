@@ -7,30 +7,18 @@
 ])
 
 @php
-    $markSize = $size === 'lg' ? 'h-10 w-10' : 'h-8 w-8';
-    $nameSize = $size === 'lg' ? 'text-lg' : 'text-base';
+    $markSize = $size === 'lg' ? 'h-12 w-12' : 'h-9 w-9';
+    $nameSize = $size === 'lg' ? 'text-lg' : 'text-[0.9375rem]';
+    $tag = $href !== null ? 'a' : 'div';
 @endphp
 
-@if ($href !== null)
-    <a href="{{ $href }}" {{ $attributes->merge(['class' => 'inline-flex items-center gap-3 rounded-md']) }}>
-        <x-application-logo class="{{ $markSize }}" />
+<{{ $tag }} @if ($href !== null) href="{{ $href }}" @endif {{ $attributes->merge(['class' => 'inline-flex items-center gap-2.5 rounded-xl']) }}>
+    <x-application-logo class="{{ $markSize }}" />
 
-        <span class="flex min-w-0 flex-col leading-tight">
-            <span class="truncate font-semibold text-zinc-900 {{ $nameSize }}">{{ config('app.name') }}</span>
-            @if ($tagline !== null)
-                <span class="truncate text-xs text-zinc-500">{{ $tagline }}</span>
-            @endif
-        </span>
-    </a>
-@else
-    <div {{ $attributes->merge(['class' => 'inline-flex items-center gap-3']) }}>
-        <x-application-logo class="{{ $markSize }}" />
-
-        <span class="flex min-w-0 flex-col leading-tight">
-            <span class="truncate font-semibold text-zinc-900 {{ $nameSize }}">{{ config('app.name') }}</span>
-            @if ($tagline !== null)
-                <span class="truncate text-xs text-zinc-500">{{ $tagline }}</span>
-            @endif
-        </span>
-    </div>
-@endif
+    <span class="flex min-w-0 flex-col leading-tight">
+        <span class="truncate font-bold tracking-tight text-zinc-900 {{ $nameSize }}">{{ config('app.name') }}</span>
+        @if ($tagline !== null)
+            <span class="truncate text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-primary">{{ $tagline }}</span>
+        @endif
+    </span>
+</{{ $tag }}>

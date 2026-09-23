@@ -36,6 +36,17 @@
     }
 }
 
+@layer components {
+    /* Halos d'ambiance de la charte « Salon Danse Élan » : une lueur terracotta
+       en haut, une lueur emeraude en bas. Fixes, derriere tout le contenu. */
+    .stage-glow {
+        @apply pointer-events-none fixed inset-0 -z-10;
+        background:
+            radial-gradient(60rem 28rem at 85% -8%, theme('colors.primary.soft') 0%, transparent 70%),
+            radial-gradient(40rem 22rem at 0% 110%, theme('colors.gauge.free / 8%') 0%, transparent 70%);
+    }
+}
+
 @layer utilities {
     /* Passe-droit du clavier : un lien d'evitement reste invisible tant qu'il
        n'a pas le focus. */

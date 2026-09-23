@@ -1,6 +1,6 @@
 <x-ui.card :title="__('Update Password')"
            :subtitle="__('Ensure your account is using a long, random password to stay secure.')">
-    <form method="post" action="{{ route('password.update') }}" class="max-w-xl space-y-4">
+    <form method="post" action="{{ route('password.update') }}" class="space-y-5">
         @csrf
         @method('put')
 
@@ -19,8 +19,8 @@
             <x-text-input id="update_password_password_confirmation" name="password_confirmation" type="password" autocomplete="new-password" />
         </x-ui.field>
 
-        <div class="flex items-center gap-4 pt-2">
-            <x-ui.button variant="primary" size="touch">{{ __('Save') }}</x-ui.button>
+        <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
+            <x-ui.button variant="primary" size="touch" class="w-full sm:w-auto">{{ __('Save') }}</x-ui.button>
 
             @if (session('status') === 'password-updated')
                 <p x-data="{ show: true }" x-show="show" x-transition

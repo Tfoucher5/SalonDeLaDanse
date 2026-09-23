@@ -6,11 +6,11 @@
     'hint' => null,
 ])
 
-<div {{ $attributes->merge(['class' => 'rounded-lg border border-zinc-200 bg-white p-4 tabular-grid']) }}>
-    <p class="text-sm text-zinc-500">{{ $label }}</p>
-    <p class="mt-1 text-2xl font-semibold text-zinc-900">{{ $value }}</p>
+<div {{ $attributes->merge(['class' => 'rounded-xl bg-zinc-100/70 p-4 tabular-grid']) }}>
+    <p class="text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-zinc-500">{{ $label }}</p>
+    <p class="mt-1 text-base font-bold text-zinc-900">{{ $value }}</p>
 
     @if ($hint !== null)
-        <p class="mt-1 text-sm text-zinc-500">{{ $hint }}</p>
+        <p class="mt-0.5 text-sm text-zinc-500">{{ $hint }}</p>
     @endif
 </div>

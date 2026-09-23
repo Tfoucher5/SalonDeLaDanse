@@ -17,7 +17,7 @@
     $colors = [
         'free' => ['text' => 'text-gauge-free', 'bar' => 'bg-gauge-free'],
         'tight' => ['text' => 'text-gauge-tight', 'bar' => 'bg-gauge-tight'],
-        'full' => ['text' => 'text-gauge-full', 'bar' => 'bg-gauge-full'],
+        'full' => ['text' => 'text-gauge-full', 'bar' => 'bg-zinc-400'],
     ];
 
     $color = $colors[$level] ?? $colors['free'];
@@ -26,11 +26,11 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => 'tabular-grid']) }}>
-    <p class="text-sm font-medium {{ $color['text'] }}">{{ $label }}</p>
+    <p class="text-sm font-semibold {{ $color['text'] }}">{{ $label }}</p>
 
-    <div class="mt-1.5 h-1.5 overflow-hidden rounded-md bg-zinc-200"
+    <div class="mt-1.5 h-1.5 overflow-hidden rounded-full bg-zinc-100"
          role="img"
          aria-label="{{ $taken }} place{{ $taken > 1 ? 's' : '' }} prise{{ $taken > 1 ? 's' : '' }} sur {{ $capacity }}">
-        <div class="h-full rounded-md {{ $color['bar'] }}" style="width: {{ $percent }}%"></div>
+        <div class="h-full rounded-full {{ $color['bar'] }}" style="width: {{ $percent }}%"></div>
     </div>
 </div>

@@ -2,7 +2,8 @@
     <x-slot name="header">
         <x-ui.page-header
             :title="__('Profile')"
-            subtitle="Vos informations et votre mot de passe." />
+            eyebrow="Espace bénévole"
+            subtitle="Vos informations et la sécurité de votre accès." />
     </x-slot>
 
     @can('updatePersonalInformation', $user)

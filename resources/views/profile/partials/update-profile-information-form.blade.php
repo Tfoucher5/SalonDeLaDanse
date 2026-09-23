@@ -4,7 +4,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="max-w-xl space-y-4">
+    <form method="post" action="{{ route('profile.update') }}" class="space-y-5">
         @csrf
         @method('patch')
 
@@ -21,17 +21,9 @@
         <x-ui.field :label="__('Phone')" for="phone" :messages="$errors->get('phone')" required>
             <x-text-input id="phone" name="phone" type="tel" :value="old('phone', $user->phone)" required autocomplete="tel" />
         </x-ui.field>
-        <div>
-            <x-input-label for="phone" :value="__('Phone')" />
-            <x-text-input id="phone" name="phone" type="tel" class="mt-1 block w-full" :value="old('phone', $user->phone)" required autocomplete="tel" />
-            <x-input-error class="mt-2" :messages="$errors->get('phone')" />
-        </div>
-
-        <div>
-            <x-input-label for="birth_date" :value="__('Date of birth')" />
-            <x-text-input id="birth_date" name="birth_date" type="date" class="mt-1 block w-full" :value="old('birth_date', $user->birth_date?->toDateString())" required autocomplete="bday" max="{{ today()->toDateString() }}" />
-            <x-input-error class="mt-2" :messages="$errors->get('birth_date')" />
-        </div>
+        <x-ui.field :label="__('Date of birth')" for="birth_date" :messages="$errors->get('birth_date')" required>
+            <x-text-input id="birth_date" name="birth_date" type="date" :value="old('birth_date', $user->birth_date?->toDateString())" required autocomplete="bday" max="{{ today()->toDateString() }}" />
+        </x-ui.field>
 
         <x-ui.field :label="__('Email')" for="email" :messages="$errors->get('email')" required>
             <x-text-input id="email" name="email" type="email" :value="old('email', $user->email)" required autocomplete="username" />
@@ -53,8 +45,8 @@
             </x-ui.alert>
         @endif
 
-        <div class="flex items-center gap-4 pt-2">
-            <x-ui.button variant="primary" size="touch">{{ __('Save') }}</x-ui.button>
+        <div class="flex flex-col-reverse gap-3 pt-2 sm:flex-row sm:items-center sm:justify-end">
+            <x-ui.button variant="primary" size="touch" class="w-full sm:w-auto">{{ __('Save') }}</x-ui.button>
 
             @if (session('status') === 'profile-updated')
                 <p x-data="{ show: true }" x-show="show" x-transition
