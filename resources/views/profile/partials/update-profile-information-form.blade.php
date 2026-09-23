@@ -1,76 +1,55 @@
-<section>
-    <header>
-        <h2 class="text-lg font-semibold text-zinc-900">
-            {{ __('Profile Information') }}
-        </h2>
-
-        <p class="mt-1 text-sm text-zinc-500">
-            {{ __("Update your account's profile information and email address.") }}
-        </p>
-    </header>
-
+<x-ui.card :title="__('Profile Information')"
+           :subtitle="__('Update your account\'s profile information and email address.')">
     <form id="send-verification" method="post" action="{{ route('verification.send') }}">
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+    <form method="post" action="{{ route('profile.update') }}" class="max-w-xl space-y-4">
         @csrf
         @method('patch')
 
-        <div>
-            <x-input-label for="first_name" :value="__('First Name')" />
-            <x-text-input id="first_name" name="first_name" type="text" class="mt-1 block w-full" :value="old('first_name', $user->first_name)" required autofocus autocomplete="given-name" />
-            <x-input-error class="mt-2" :messages="$errors->get('first_name')" />
+        <div class="grid gap-4 sm:grid-cols-2">
+            <x-ui.field :label="__('First Name')" for="first_name" :messages="$errors->get('first_name')" required>
+                <x-text-input id="first_name" name="first_name" type="text" :value="old('first_name', $user->first_name)" required autofocus autocomplete="given-name" />
+            </x-ui.field>
+
+            <x-ui.field :label="__('Last Name')" for="last_name" :messages="$errors->get('last_name')" required>
+                <x-text-input id="last_name" name="last_name" type="text" :value="old('last_name', $user->last_name)" required autocomplete="family-name" />
+            </x-ui.field>
         </div>
 
-        <div>
-            <x-input-label for="last_name" :value="__('Last Name')" />
-            <x-text-input id="last_name" name="last_name" type="text" class="mt-1 block w-full" :value="old('last_name', $user->last_name)" required autocomplete="family-name" />
-            <x-input-error class="mt-2" :messages="$errors->get('last_name')" />
-        </div>
+        <x-ui.field :label="__('Phone')" for="phone" :messages="$errors->get('phone')" required>
+            <x-text-input id="phone" name="phone" type="tel" :value="old('phone', $user->phone)" required autocomplete="tel" />
+        </x-ui.field>
 
-        <div>
-            <x-input-label for="phone" :value="__('Phone')" />
-            <x-text-input id="phone" name="phone" type="tel" class="mt-1 block w-full" :value="old('phone', $user->phone)" required autocomplete="tel" />
-            <x-input-error class="mt-2" :messages="$errors->get('phone')" />
-        </div>
+        <x-ui.field :label="__('Email')" for="email" :messages="$errors->get('email')" required>
+            <x-text-input id="email" name="email" type="email" :value="old('email', $user->email)" required autocomplete="username" />
+        </x-ui.field>
 
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
-            <x-input-error class="mt-2" :messages="$errors->get('email')" />
+        @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
+            <x-ui.alert tone="attention">
+                {{ __('Your email address is unverified.') }}
 
-            @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
-                <div>
-                    <p class="text-sm mt-2 text-zinc-900">
-                        {{ __('Your email address is unverified.') }}
+                <button form="send-verification" class="rounded-md text-sm text-zinc-500 underline hover:text-zinc-900">
+                    {{ __('Click here to re-send the verification email.') }}
+                </button>
 
-                        <button form="send-verification" class="underline text-sm text-zinc-500 hover:text-zinc-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-ring">
-                            {{ __('Click here to re-send the verification email.') }}
-                        </button>
+                @if (session('status') === 'verification-link-sent')
+                    <p class="mt-2 text-sm font-medium text-gauge-free">
+                        {{ __('A new verification link has been sent to your email address.') }}
                     </p>
+                @endif
+            </x-ui.alert>
+        @endif
 
-                    @if (session('status') === 'verification-link-sent')
-                        <p class="mt-2 font-medium text-sm text-gauge-free">
-                            {{ __('A new verification link has been sent to your email address.') }}
-                        </p>
-                    @endif
-                </div>
-            @endif
-        </div>
-
-        <div class="flex items-center gap-4">
-            <x-primary-button>{{ __('Save') }}</x-primary-button>
+        <div class="flex items-center gap-4 pt-2">
+            <x-ui.button variant="primary" size="touch">{{ __('Save') }}</x-ui.button>
 
             @if (session('status') === 'profile-updated')
-                <p
-                    x-data="{ show: true }"
-                    x-show="show"
-                    x-transition
-                    x-init="setTimeout(() => show = false, 2000)"
-                    class="text-sm text-zinc-500"
-                >{{ __('Saved.') }}</p>
+                <p x-data="{ show: true }" x-show="show" x-transition
+                   x-init="setTimeout(() => show = false, 2000)"
+                   class="text-sm text-gauge-free">{{ __('Saved.') }}</p>
             @endif
         </div>
     </form>
-</section>
+</x-ui.card>

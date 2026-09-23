@@ -1,37 +1,40 @@
+@props([
+    'title' => null,
+    'width' => 'lg',
+])
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-
-        <title>{{ config('app.name', 'Salon de la Danse') }}</title>
-
-        <!-- Police -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <x-layout.head :title="$title" />
     </head>
-    <body class="font-sans antialiased text-zinc-900">
-        <div class="min-h-screen bg-zinc-50">
+
+    <body class="min-h-screen bg-zinc-50 font-sans text-zinc-900 antialiased">
+        <a href="#contenu" class="skip-link print-hidden">Aller au contenu</a>
+
+        <div class="flex min-h-screen flex-col">
             @include('layouts.navigation')
 
-            <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white border-b border-zinc-200">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <header class="border-b border-zinc-200 bg-white">
+                    <x-ui.container :size="$width" class="py-6 sm:py-8">
                         {{ $header }}
-                    </div>
+                    </x-ui.container>
                 </header>
             @endisset
 
-            <!-- Page Content -->
-            <main>
-                {{ $slot }}
+            <main id="contenu" class="flex-1 py-6 sm:py-8">
+                <x-ui.container :size="$width" class="space-y-6">
+                    {{ $slot }}
+                </x-ui.container>
             </main>
+
+            <footer class="mt-auto border-t border-zinc-200 bg-white print-hidden">
+                <x-ui.container :size="$width" class="flex flex-wrap items-center justify-between gap-2 py-6 text-sm text-zinc-500">
+                    <p>{{ config('app.name') }} — JayDance Fam</p>
+                    <p>Espace bénévoles</p>
+                </x-ui.container>
+            </footer>
         </div>
     </body>
 </html>

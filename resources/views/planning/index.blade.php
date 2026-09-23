@@ -1,95 +1,97 @@
-<x-app-layout>
+<x-app-layout title="Planning">
     <x-slot name="header">
-        <h2 class="text-2xl font-semibold text-zinc-900">Le planning</h2>
-        <p class="mt-1 text-sm text-zinc-500">
+        <x-ui.page-header
+            title="Le planning"
+            :eyebrow="$edition?->name"
+            :subtitle="$edition ? 'Choisissez vos créneaux jour par jour.' : 'Aucune édition n\'est ouverte pour le moment.'">
             @if ($edition)
-                {{ $edition->name }} — {{ $state->label() }}
-            @else
-                Aucune édition n'est ouverte pour le moment.
+                <x-slot name="actions">
+                    <x-ui.badge :tone="$state->tone()">{{ $state->label() }}</x-ui.badge>
+                </x-slot>
             @endif
-        </p>
+        </x-ui.page-header>
     </x-slot>
 
-    <div class="py-8">
-        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+    @if ($edition === null)
+        <x-ui.empty title="Le planning n'est pas encore ouvert">
+            Il s'affichera ici dès qu'une édition du Salon sera ouverte aux inscriptions.
+        </x-ui.empty>
+    @else
+        {{-- L'issue de la derniere action, avant tout le reste : une regle qui
+             refuse doit se lire sans chercher. --}}
+        @if (session('status'))
+            <x-ui.alert tone="primary">{{ session('status') }}</x-ui.alert>
+        @endif
 
-            @if ($edition === null)
-                <section class="bg-white border border-zinc-200 rounded-lg p-6">
-                    <p class="text-zinc-900">
-                        Le planning s'affichera ici dès qu'une édition du Salon sera ouverte.
-                    </p>
-                </section>
-            @else
-                {{-- L'issue de la dernière action, avant tout le reste : une règle
-                     qui refuse doit se lire sans chercher. --}}
-                @if (session('status'))
-                    <p role="status" class="rounded-md border border-primary bg-primary-soft p-4 text-sm text-zinc-900">
-                        {{ session('status') }}
-                    </p>
+        @error('shift')
+            <x-ui.alert tone="danger">{{ $message }}</x-ui.alert>
+        @enderror
+
+        {{-- Ce que le benevole a deja retenu, tous jours confondus. --}}
+        <x-ui.card title="Mes créneaux" subtitle="Tous jours confondus.">
+            @php
+                $booked = $bookedShiftIds->count();
+                $maximum = $edition->max_slots_per_volunteer;
+                $minimum = $edition->min_slots_per_volunteer;
+                $filled = $maximum > 0 ? (int) round(min($booked, $maximum) / $maximum * 100) : 0;
+            @endphp
+
+            <p class="tabular-grid text-zinc-900">
+                {{ $booked }} créneau{{ $booked > 1 ? 'x' : '' }}
+                retenu{{ $booked > 1 ? 's' : '' }} sur {{ $maximum }} possibles.
+
+                @if ($booked < $minimum)
+                    Il vous en faut {{ $minimum }} au minimum pour valider votre planning.
                 @endif
+            </p>
 
-                @error('shift')
-                    <p role="alert" class="rounded-md border border-danger bg-white p-4 text-sm text-danger">
-                        {{ $message }}
+            <div class="mt-3 h-1.5 overflow-hidden rounded-md bg-zinc-200"
+                 role="img"
+                 aria-label="{{ $booked }} créneau{{ $booked > 1 ? 'x' : '' }} sur {{ $maximum }}">
+                <div class="h-full rounded-md bg-primary" style="width: {{ $filled }}%"></div>
+            </div>
+
+            @unless ($state->isEditable())
+                <x-ui.alert class="mt-4">{{ $state->description() }}</x-ui.alert>
+            @endunless
+        </x-ui.card>
+
+        {{-- Navigation par jour : le premier niveau de lecture sur mobile. --}}
+        <nav class="flex flex-wrap gap-2" aria-label="Jours du Salon">
+            @foreach ($days as $day)
+                <x-planning.day-tab :day="$day" :selected="$selectedDay?->isSameDay($day) ?? false" />
+            @endforeach
+        </nav>
+
+        {{-- Puis les tranches horaires, et dans chacune les missions. --}}
+        @foreach ($timeSlots as $timeSlot)
+            @php $shifts = $shiftsByTimeSlot->get($timeSlot->id, collect()); @endphp
+
+            <section class="space-y-3">
+                <div class="flex flex-wrap items-baseline justify-between gap-2 border-b border-zinc-200 pb-2">
+                    <h2 class="tabular-grid text-lg font-semibold text-zinc-900">{{ $timeSlot->label() }}</h2>
+
+                    <p class="text-sm text-zinc-500">
+                        {{ $shifts->count() }} mission{{ $shifts->count() > 1 ? 's' : '' }}
                     </p>
-                @enderror
+                </div>
 
-                {{-- Ce que le bénévole a déjà retenu, tous jours confondus. --}}
-                <section class="bg-white border border-zinc-200 rounded-lg p-6 tabular-grid">
-                    <h3 class="text-lg font-semibold text-zinc-900">Mes créneaux</h3>
-                    <p class="mt-2 text-zinc-900">
-                        {{ $bookedShiftIds->count() }} créneau{{ $bookedShiftIds->count() > 1 ? 'x' : '' }}
-                        retenu{{ $bookedShiftIds->count() > 1 ? 's' : '' }}
-                        sur {{ $edition->max_slots_per_volunteer }} possibles.
+                @if ($shifts->isEmpty())
+                    <p class="rounded-lg border border-dashed border-zinc-200 bg-white p-4 text-sm text-zinc-500">
+                        Aucune mission n'est ouverte sur cette tranche horaire.
                     </p>
-
-                    @if (! $state->isEditable())
-                        <p class="mt-4 flex items-start gap-2 rounded-md bg-zinc-100 p-4 text-sm text-zinc-500">
-                            <span aria-hidden="true">&#9432;</span>
-                            <span>{{ $state->description() }}</span>
-                        </p>
-                    @endif
-                </section>
-
-                {{-- Navigation par jour : le premier niveau de lecture sur mobile. --}}
-                <nav class="flex flex-wrap gap-2" aria-label="Jours du Salon">
-                    @foreach ($days as $day)
-                        @php $isSelected = $selectedDay?->isSameDay($day) ?? false; @endphp
-
-                        <a href="{{ route('planning.index', ['day' => $day->toDateString()]) }}"
-                           @if ($isSelected) aria-current="page" @endif
-                           class="flex h-14 flex-1 basis-24 flex-col items-center justify-center rounded-md border tabular-grid {{ $isSelected ? 'border-primary bg-primary text-white' : 'border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-100' }}">
-                            <span class="text-sm font-medium">{{ ucfirst($day->translatedFormat('D')) }}</span>
-                            <span class="text-xs">{{ $day->translatedFormat('j M') }}</span>
-                        </a>
-                    @endforeach
-                </nav>
-
-                {{-- Puis les tranches horaires, et dans chacune les missions. --}}
-                @foreach ($timeSlots as $timeSlot)
-                    @php $shifts = $shiftsByTimeSlot->get($timeSlot->id, collect()); @endphp
-
-                    <section>
-                        <h3 class="text-lg font-semibold text-zinc-900 tabular-grid">{{ $timeSlot->label() }}</h3>
-
-                        @if ($shifts->isEmpty())
-                            <p class="mt-3 rounded-lg border border-zinc-200 bg-white p-4 text-sm text-zinc-500">
-                                Aucune mission n'est ouverte sur cette tranche horaire.
-                            </p>
-                        @else
-                            <div class="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-                                @foreach ($shifts as $shift)
-                                    <x-planning.shift-card
-                                        :shift="$shift"
-                                        :booked="$bookedShiftIds->contains($shift->id)"
-                                        :motive="$motives[$shift->id] ?? null"
-                                        :editable="$state->isEditable()" />
-                                @endforeach
-                            </div>
-                        @endif
-                    </section>
-                @endforeach
-            @endif
-        </div>
-    </div>
+                @else
+                    <div class="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
+                        @foreach ($shifts as $shift)
+                            <x-planning.shift-card
+                                :shift="$shift"
+                                :booked="$bookedShiftIds->contains($shift->id)"
+                                :motive="$motives[$shift->id] ?? null"
+                                :editable="$state->isEditable()" />
+                        @endforeach
+                    </div>
+                @endif
+            </section>
+        @endforeach
+    @endif
 </x-app-layout>

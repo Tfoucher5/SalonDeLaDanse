@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Str;
 
 // `role`, `edition_id`, `profile_locked_at` et `planning_validated_at` sont
 // volontairement hors du fillable : ils ne doivent jamais venir d une requete.
@@ -49,6 +50,18 @@ class User extends Authenticatable
     protected function fullName(): Attribute
     {
         return Attribute::get(fn (): string => trim($this->first_name.' '.$this->last_name));
+    }
+
+    /**
+     * Initiales du benevole, repli de l'avatar quand la photo manque.
+     *
+     * @return Attribute<string, never>
+     */
+    protected function initials(): Attribute
+    {
+        return Attribute::get(fn (): string => Str::upper(
+            Str::substr((string) $this->first_name, 0, 1).Str::substr((string) $this->last_name, 0, 1)
+        ));
     }
 
     public function isAdmin(): bool

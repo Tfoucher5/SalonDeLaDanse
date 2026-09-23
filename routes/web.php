@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DesignSystemController;
 use App\Http\Controllers\PlanningController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ShiftBookingController;
@@ -33,5 +34,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
 });
+
+// La planche de la charte graphique est un outil de travail : elle n existe
+// jamais en production, et jamais pour un visiteur non connecte.
+if (! app()->isProduction()) {
+    Route::get('/design-system', DesignSystemController::class)
+        ->middleware('auth')
+        ->name('design-system');
+}
 
 require __DIR__.'/auth.php';

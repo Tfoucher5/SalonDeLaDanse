@@ -76,7 +76,7 @@ it('reste consultable sans aucune edition en base', function () {
     $this->actingAs(User::factory()->create(['edition_id' => null]))
         ->get('/dashboard')
         ->assertOk()
-        ->assertSee("Aucune édition n'est ouverte pour le moment.", escape: false);
+        ->assertSee("Aucune édition n'est ouverte pour le moment.");
 });
 
 it('ne divulgue le nom d aucun autre benevole', function () {

@@ -63,6 +63,22 @@ enum PlanningState: string
     }
 
     /**
+     * Ton du badge qui porte l'état, au sens du design system.
+     *
+     * Aucun état n'est rouge : un planning fermé ou verrouillé est une
+     * situation normale, le rouge reste réservé à ce qui a échoué.
+     */
+    public function tone(): string
+    {
+        return match ($this) {
+            self::Draft => 'primary',
+            self::Validated => 'free',
+            self::Locked => 'neutral',
+            self::Closed => 'full',
+        };
+    }
+
+    /**
      * Phrase expliquant l'état, affichée sous le libellé.
      */
     public function description(): string

@@ -1,29 +1,29 @@
+@props([
+    'title' => null,
+    'width' => 'sm:max-w-md',
+])
+
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-
-        <title>{{ config('app.name', 'Salon de la Danse') }}</title>
-
-        <!-- Police -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-
-        <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <x-layout.head :title="$title" />
     </head>
-    <body class="font-sans antialiased text-zinc-900">
-        <div class="min-h-screen flex flex-col sm:justify-center items-center px-4 pt-10 pb-10 sm:pt-0 bg-zinc-50">
-            <a href="/" class="text-xl font-semibold text-zinc-900">
-                {{ config('app.name', 'Salon de la Danse') }}
-            </a>
 
-            <div class="w-full sm:max-w-md mt-6 px-6 py-6 bg-white border border-zinc-200 rounded-lg">
-                {{ $slot }}
-            </div>
+    <body class="min-h-screen bg-zinc-50 font-sans text-zinc-900 antialiased">
+        <div class="flex min-h-screen flex-col items-center justify-center px-4 py-10">
+            <main class="w-full {{ $width }}">
+                <div class="mb-6 flex justify-center">
+                    <x-ui.brand :href="url('/')" size="lg" />
+                </div>
+
+                <div class="rounded-lg border border-zinc-200 bg-white p-6 sm:p-8">
+                    {{ $slot }}
+                </div>
+
+                <p class="mt-6 text-center text-sm text-zinc-500">
+                    {{ config('app.name') }} — JayDance Fam
+                </p>
+            </main>
         </div>
     </body>
 </html>

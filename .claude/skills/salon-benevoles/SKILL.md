@@ -55,7 +55,9 @@ Lancer : `composer run dev` · Tester : `composer run test` · Compte de test se
    PHP. Le front n'est qu'un confort, jamais la source de vérité.
 6. **Design system respecté.** Interface neutre (échelle `zinc`), un seul accent indigo
    `#4338CA` pour les actions, couleur réservée à l'information. Aucune couleur en dur dans
-   les vues : uniquement les tokens Tailwind. Détail dans `references/design-system.md`.
+   les vues : uniquement les tokens Tailwind. Une page se compose avec le kit
+   `x-ui.*` (`resources/views/components/ui/`), jamais en recopiant des classes — la planche
+   `/design-system` montre tout le kit. Détail dans `references/design-system.md`.
 7. **Aucun secret dans le code.** Identifiants, clés et mots de passe vivent dans `.env`,
    jamais dans un fichier versionné — `.env.example` ne contient que des placeholders vides.
 

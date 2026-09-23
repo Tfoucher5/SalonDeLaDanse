@@ -32,6 +32,19 @@ export default {
             fontFamily: {
                 sans: ['Inter', ...defaultTheme.fontFamily.sans],
             },
+            // Une seule ombre dans toute l'application, reservee a ce qui flotte
+            // vraiment : menu deroulant et modale. Ailleurs, la bordure suffit.
+            boxShadow: {
+                overlay: '0 10px 30px -12px rgb(24 24 27 / 0.22), 0 2px 8px -4px rgb(24 24 27 / 0.10)',
+            },
+            // Cible tactile minimale du mobile first, nommee pour ne plus
+            // avoir a se souvenir que 44 px valent `h-11`.
+            minHeight: {
+                touch: '2.75rem',
+            },
+            minWidth: {
+                touch: '2.75rem',
+            },
         },
     },
 

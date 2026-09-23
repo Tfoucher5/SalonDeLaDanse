@@ -199,6 +199,47 @@ Les neutres passent par l'échelle `zinc` native, rien à déclarer.
 retirer au lot 0. Un mode sombre à moitié fait est pire que pas de mode sombre, et ce n'est
 pas au périmètre.
 
+## Kit de composants Blade
+
+**La charte ne vit pas dans les vues, elle vit dans `resources/views/components/ui/`.**
+Une page nouvelle se compose avec ces briques. Si un besoin n'a pas de composant, on ajoute
+le composant — on ne recopie pas des classes dans une vue.
+
+| Composant | Rôle | Props utiles |
+|---|---|---|
+| `x-ui.button` | Toute commande, lien ou bouton | `variant` primary/secondary/ghost/danger, `href`, `size` md/touch, `block` |
+| `x-ui.card` | Surface blanche bordée, titre et actions | `title`, `subtitle`, slots `actions` et `footer` |
+| `x-ui.page-header` | Titre de page dans le slot `header` | `title`, `subtitle`, `eyebrow`, slot `actions` |
+| `x-ui.badge` | Étiquette d'état | `tone` neutral/primary/primary-outline/free/tight/full/danger |
+| `x-ui.alert` | Message d'issue ou contrainte | `tone` neutral/primary/success/attention/danger, `title` |
+| `x-ui.field` | Libellé + contrôle + aide + erreur | `label`, `for`, `hint`, `messages`, `required` |
+| `x-ui.data-list` / `x-ui.data-row` | Paires libellé / valeur | `label` sur la ligne |
+| `x-ui.stat` | Un chiffre et ce qu'il compte | `label`, `value`, `hint` |
+| `x-ui.gauge` | Places restantes, texte + barre | `level` free/tight/full, `label`, `remaining`, `capacity` |
+| `x-ui.table` | Tableau d'administration | slot `head` |
+| `x-ui.empty` | Absence de données et sa raison | `title` |
+| `x-ui.container` | Gouttière et largeur de lecture | `size` sm/md/lg/xl |
+| `x-ui.avatar` | Photo du bénévole ou ses initiales | `user`, `size` |
+| `x-ui.brand` | Marque, nom du Salon, accroche | `href`, `size`, `tagline` |
+
+`x-primary-button`, `x-secondary-button` et `x-danger-button` hérités de Breeze sont de
+simples alias de `x-ui.button` : une seule source de vérité pour les boutons.
+
+Les deux layouts acceptent `title` (titre d'onglet) et `width`. Tout `<head>` passe par
+`x-layout.head` : une seule déclaration de police, un seul point d'entrée Vite.
+
+### La planche de référence
+
+`/design-system` affiche tout le kit dans tous ses états. La route n'existe **pas en
+production** et demande une session authentifiée. C'est l'écran à ouvrir avant de composer
+une page, et à compléter quand on ajoute un composant.
+
+### Ce que les tests interdisent
+
+`tests/Feature/DesignSystemTest.php` échoue si une vue contient une classe `dark:`, une
+palette Tailwind hors `zinc`, une couleur hexadécimale en dur, un `rounded-full`, ou une
+ombre autre que `shadow-overlay` ailleurs que dans le menu déroulant et la modale.
+
 ## Mobile first
 
 Le planning se conçoit **d'abord pour un écran de 375 px**, l'écran large n'étant qu'un
