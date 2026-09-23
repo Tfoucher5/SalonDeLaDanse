@@ -49,12 +49,12 @@
                 :messages="$errors->get('instructions')"
                 hint="Affichées sur la fiche récapitulative du bénévole. Facultatives.">
         <textarea id="instructions" name="instructions" rows="4" maxlength="2000"
-                  class="w-full rounded-md border-zinc-200 text-sm text-zinc-900 focus:border-primary focus:ring-2 focus:ring-primary-ring">{{ old('instructions', $mission?->instructions) }}</textarea>
+                  class="w-full rounded-xl border-zinc-200 text-sm text-zinc-900 focus:border-primary focus:ring-2 focus:ring-primary-ring">{{ old('instructions', $mission?->instructions) }}</textarea>
     </x-ui.field>
 
     {{-- Les deux interrupteurs de la mission. Ils ne disent pas la meme chose :
          l'un dit qui peut reserver, l'autre si la mission existe encore. --}}
-    <fieldset class="space-y-3 rounded-lg border border-zinc-200 p-4">
+    <fieldset class="space-y-3 rounded-2xl p-4 ring-1 ring-zinc-900/5">
         <legend class="px-1 text-sm font-medium text-zinc-500">Disponibilité</legend>
 
         <label class="flex items-start gap-3" for="is_public">

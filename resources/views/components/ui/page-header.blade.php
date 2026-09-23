@@ -1,21 +1,36 @@
-{{-- En-tete de page : de quoi il s'agit, et l'action principale s'il y en a une. --}}
+{{--
+    En-tete de page : de quoi il s'agit, et l'action principale s'il y en a une.
+
+    `back` affiche un lien de retour au-dessus du titre : la destination
+    logique de la page, pas l'historique du navigateur, pour qu'un lien
+    partage ou une page rechargee menent toujours au meme endroit.
+--}}
 
 @props([
     'title',
     'subtitle' => null,
     'eyebrow' => null,
+    'back' => null,
+    'backLabel' => 'Retour',
 ])
 
-<div {{ $attributes->merge(['class' => 'flex flex-wrap items-start justify-between gap-4']) }}>
+<div {{ $attributes->merge(['class' => 'flex flex-col gap-4 md:flex-row md:items-end md:justify-between']) }}>
     <div class="min-w-0">
-        @if ($eyebrow !== null)
-            <p class="text-sm font-medium text-zinc-500">{{ $eyebrow }}</p>
+        @if ($back !== null)
+            <x-ui.back-link :href="$back" class="mb-3">{{ $backLabel }}</x-ui.back-link>
         @endif
 
-        <h1 class="text-2xl font-semibold text-zinc-900 sm:text-3xl">{{ $title }}</h1>
+        @if ($eyebrow !== null)
+            <p class="mb-3 flex w-fit items-center gap-2 rounded-full bg-plum-soft px-3 py-1 text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-plum">
+                <span class="h-1.5 w-1.5 rounded-full bg-plum" aria-hidden="true"></span>
+                {{ $eyebrow }}
+            </p>
+        @endif
+
+        <h1 class="text-[1.75rem] font-extrabold leading-tight tracking-tight text-zinc-900 sm:text-4xl">{{ $title }}</h1>
 
         @if ($subtitle !== null)
-            <p class="mt-1 text-sm text-zinc-500">{{ $subtitle }}</p>
+            <p class="mt-1.5 text-base text-zinc-500 sm:text-lg">{{ $subtitle }}</p>
         @endif
     </div>
 

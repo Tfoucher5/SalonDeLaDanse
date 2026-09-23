@@ -66,7 +66,7 @@
 
                     <input id="photo" name="photo" type="file"
                            accept="{{ collect(config('salon.photo.mimes'))->map(fn ($mime) => 'image/'.$mime)->implode(',') }}"
-                           class="block w-full text-sm text-zinc-500 file:me-4 file:rounded-md file:border file:border-zinc-200 file:bg-white file:px-4 file:py-2 file:text-sm file:font-medium file:text-zinc-900 hover:file:bg-zinc-100" />
+                           class="block w-full text-sm text-zinc-500 file:me-4 file:rounded-xl file:border file:border-zinc-200 file:bg-white file:px-4 file:py-2 file:text-sm file:font-medium file:text-zinc-900 hover:file:bg-zinc-100" />
                 </div>
             </x-ui.field>
 

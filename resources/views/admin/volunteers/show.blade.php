@@ -28,7 +28,7 @@
         <x-ui.alert tone="attention" title="Mot de passe temporaire">
             <p>À transmettre au bénévole. Il disparaîtra dès que vous quitterez cette page.</p>
 
-            <p class="mt-2 select-all rounded-md border border-zinc-200 bg-zinc-100 px-3 py-2 font-medium text-zinc-900 tabular-grid">
+            <p class="mt-2 select-all rounded-xl bg-zinc-50 px-3 py-2 ring-1 ring-zinc-900/5 font-medium text-zinc-900 tabular-grid">
                 {{ session('temporary_password') }}
             </p>
         </x-ui.alert>

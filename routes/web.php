@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\VolunteerCredentialsController as AdminVolunteerC
 use App\Http\Controllers\Admin\VolunteerPlanningController as AdminVolunteerPlanningController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignSystemController;
+use App\Http\Controllers\LegalNoticeController;
 use App\Http\Controllers\PlanningController;
 use App\Http\Controllers\PlanningSummaryController;
 use App\Http\Controllers\ProfileController;
@@ -18,6 +19,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/mentions-legales', LegalNoticeController::class)->name('legal.notice');
 
 // Espace benevole. 'volunteer.space' renvoie l administrateur chez lui : ces
 // ecrans ne lui montreraient qu un planning qu il n a pas a composer.

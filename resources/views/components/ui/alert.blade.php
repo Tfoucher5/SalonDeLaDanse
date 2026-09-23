@@ -11,11 +11,11 @@
 
 @php
     $tones = [
-        'neutral' => ['surface' => 'border-zinc-200 bg-zinc-100', 'text' => 'text-zinc-500', 'icon' => 'text-zinc-400', 'role' => 'status'],
-        'primary' => ['surface' => 'border-primary bg-primary-soft', 'text' => 'text-zinc-900', 'icon' => 'text-primary', 'role' => 'status'],
-        'success' => ['surface' => 'border-zinc-200 bg-white', 'text' => 'text-zinc-900', 'icon' => 'text-gauge-free', 'role' => 'status'],
-        'attention' => ['surface' => 'border-zinc-200 bg-white', 'text' => 'text-zinc-900', 'icon' => 'text-gauge-tight', 'role' => 'status'],
-        'danger' => ['surface' => 'border-danger bg-white', 'text' => 'text-danger', 'icon' => 'text-danger', 'role' => 'alert'],
+        'neutral' => ['surface' => 'bg-zinc-100', 'text' => 'text-zinc-600', 'icon' => 'text-zinc-400', 'role' => 'status'],
+        'primary' => ['surface' => 'bg-primary-soft', 'text' => 'text-zinc-900', 'icon' => 'text-primary', 'role' => 'status'],
+        'success' => ['surface' => 'bg-gauge-free/10', 'text' => 'text-zinc-900', 'icon' => 'text-gauge-free', 'role' => 'status'],
+        'attention' => ['surface' => 'bg-gauge-tight/10', 'text' => 'text-zinc-900', 'icon' => 'text-gauge-tight', 'role' => 'status'],
+        'danger' => ['surface' => 'bg-danger/10 ring-1 ring-inset ring-danger/30', 'text' => 'text-danger', 'icon' => 'text-danger', 'role' => 'alert'],
     ];
 
     $style = $tones[$tone] ?? $tones['neutral'];
@@ -29,14 +29,14 @@
     ];
 @endphp
 
-<div role="{{ $style['role'] }}" {{ $attributes->merge(['class' => 'flex items-start gap-3 rounded-md border p-4 text-sm '.$style['surface'].' '.$style['text']]) }}>
+<div role="{{ $style['role'] }}" {{ $attributes->merge(['class' => 'flex items-start gap-3 rounded-xl p-4 text-sm '.$style['surface'].' '.$style['text']]) }}>
     <svg class="mt-0.5 h-5 w-5 shrink-0 {{ $style['icon'] }}" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
         <path fill-rule="evenodd" clip-rule="evenodd" d="{{ $paths[$tone] ?? $paths['neutral'] }}" />
     </svg>
 
     <div class="min-w-0">
         @if ($title !== null)
-            <p class="font-medium text-zinc-900">{{ $title }}</p>
+            <p class="font-semibold text-zinc-900">{{ $title }}</p>
         @endif
 
         <div @class(['mt-1' => $title !== null])>{{ $slot }}</div>

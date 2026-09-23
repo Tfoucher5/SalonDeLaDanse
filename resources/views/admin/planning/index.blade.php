@@ -94,7 +94,7 @@
                     </div>
 
                     @if ($shifts->isEmpty())
-                        <p class="rounded-lg border border-dashed border-zinc-200 bg-white p-4 text-sm text-zinc-500">
+                        <p class="rounded-2xl border border-dashed border-zinc-200 bg-white p-4 text-sm text-zinc-500">
                             Aucune mission n'est ouverte sur cette tranche horaire.
                         </p>
                     @else

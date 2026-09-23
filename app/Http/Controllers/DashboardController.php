@@ -22,6 +22,7 @@ class DashboardController extends Controller
             'user' => $user,
             'edition' => $edition,
             'state' => PlanningState::for($user, $edition),
+            'bookedCount' => $user->assignments()->count(),
             'commitmentRules' => $edition === null ? [] : $this->commitmentRules($edition),
             'contact' => array_filter(config('salon.contact')),
         ]);

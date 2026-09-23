@@ -16,6 +16,8 @@ use Illuminate\Validation\Validator;
  */
 class BookShiftRequest extends FormRequest
 {
+    use FocusesShiftOnFailure;
+
     public function authorize(): bool
     {
         return true;

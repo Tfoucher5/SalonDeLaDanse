@@ -18,7 +18,7 @@
     $level = GaugeLevel::fromRemaining($remaining, $shift->capacity);
 @endphp
 
-<article {{ $attributes->merge(['class' => 'rounded-lg border border-zinc-200 bg-white p-4']) }}>
+<article {{ $attributes->merge(['class' => 'rounded-2xl bg-white p-4 ring-1 ring-zinc-900/5 shadow-card']) }}>
     <div class="flex flex-wrap items-start justify-between gap-2">
         <h3 class="min-w-0 font-medium text-zinc-900">
             {{ $shift->mission->name }}
@@ -45,7 +45,7 @@
             @foreach ($volunteers as $volunteer)
                 <li>
                     <a href="{{ route('admin.volunteers.show', $volunteer) }}"
-                       class="flex items-center gap-2 rounded-md px-1.5 py-1 text-sm text-zinc-900 transition hover:bg-zinc-100">
+                       class="flex items-center gap-2 rounded-xl px-1.5 py-1 text-sm text-zinc-900 transition hover:bg-zinc-100">
                         <x-ui.avatar :user="$volunteer" size="h-6 w-6" />
 
                         <span class="min-w-0 truncate">{{ $volunteer->full_name }}</span>

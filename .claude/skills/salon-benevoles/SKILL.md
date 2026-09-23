@@ -53,8 +53,9 @@ Lancer : `composer run dev` · Tester : `composer run test` · Compte de test se
    que par un administrateur.
 5. **Règles métier côté serveur.** Toute contrainte de planning est validée en base et en
    PHP. Le front n'est qu'un confort, jamais la source de vérité.
-6. **Design system respecté.** Interface neutre (échelle `zinc`), un seul accent indigo
-   `#4338CA` pour les actions, couleur réservée à l'information. Aucune couleur en dur dans
+6. **Design system respecté.** Charte « Salon Danse Élan » (maquette Stitch) : fond
+   porcelaine, action terracotta `primary`, états prune `plum`, jauges émeraude / ambre /
+   gris distinctes de l'action, Plus Jakarta Sans. Aucune couleur en dur dans
    les vues : uniquement les tokens Tailwind. Une page se compose avec le kit
    `x-ui.*` (`resources/views/components/ui/`), jamais en recopiant des classes — la planche
    `/design-system` montre tout le kit. Détail dans `references/design-system.md`.

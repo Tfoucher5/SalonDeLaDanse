@@ -95,18 +95,25 @@ it('coiffe les pages partagees de l en-tete du compte connecte', function () {
     $edition = salon();
 
     // Le profil est le seul ecran commun aux deux roles : chacun doit y
-    // retrouver sa propre navigation.
+    // retrouver sa propre navigation, et rien de ce qui appartient a l autre.
+    //
+    // Les URL sont comparees guillemet ferme compris : `/planning` est un
+    // prefixe de `/planning/fiche`, et une simple recherche de sous-chaine
+    // rendrait ce test faussement rouge.
     $this->actingAs(administrateur($edition))
         ->get(route('profile.edit'))
         ->assertOk()
         ->assertSee('Administration')
-        ->assertSee(route('admin.volunteers.index'), escape: false)
-        ->assertDontSee(route('planning.index'), escape: false);
+        ->assertSee(route('admin.volunteers.index').'"', escape: false)
+        ->assertDontSee(route('planning.index').'"', escape: false)
+        ->assertDontSee(route('planning.summary').'"', escape: false)
+        ->assertDontSee('Ma participation');
 
     $this->actingAs(benevole($edition))
         ->get(route('profile.edit'))
         ->assertOk()
-        ->assertSee(route('planning.index'), escape: false)
+        ->assertSee(route('planning.index').'"', escape: false)
+        ->assertSee('Ma participation')
         ->assertDontSee('Administration');
 });
 

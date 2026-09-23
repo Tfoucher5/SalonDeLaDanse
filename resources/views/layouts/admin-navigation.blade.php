@@ -4,7 +4,7 @@
     benevole pour qu'on sache de quel cote de l'outil on se trouve.
 --}}
 
-<nav x-data="{ open: false }" class="sticky top-0 z-40 border-b border-zinc-200 bg-white print-hidden">
+<nav x-data="{ open: false }" class="sticky top-0 z-40 border-b border-zinc-900/5 bg-white/90 backdrop-blur print-hidden">
     <x-ui.container size="xl">
         <div class="flex h-16 items-center justify-between gap-4">
             <div class="flex min-w-0 items-center gap-8">
@@ -36,7 +36,7 @@
             <div class="hidden sm:flex sm:items-center">
                 <x-dropdown align="right" width="48">
                     <x-slot name="trigger">
-                        <button type="button" class="inline-flex h-10 items-center gap-2 rounded-md border border-transparent px-2 text-sm font-medium text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900">
+                        <button type="button" class="inline-flex h-11 min-h-touch items-center gap-2 rounded-xl py-1 pe-2 ps-1 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100">
                             <x-ui.avatar :user="Auth::user()" />
                             <span class="max-w-[12rem] truncate">{{ Auth::user()->full_name }}</span>
 
@@ -47,7 +47,7 @@
                     </x-slot>
 
                     <x-slot name="content">
-                        <div class="border-b border-zinc-200 px-4 py-3">
+                        <div class="border-b border-zinc-900/5 px-4 py-3">
                             <p class="truncate text-sm font-medium text-zinc-900">{{ Auth::user()->full_name }}</p>
                             <p class="truncate text-sm text-zinc-500">{{ Auth::user()->role->label() }}</p>
                         </div>
@@ -71,7 +71,7 @@
             <button type="button" @click="open = ! open"
                     :aria-expanded="open"
                     aria-controls="menu-admin-mobile"
-                    class="inline-flex h-11 w-11 min-h-touch min-w-touch items-center justify-center rounded-md text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 sm:hidden">
+                    class="inline-flex h-11 w-11 min-h-touch min-w-touch items-center justify-center rounded-xl text-zinc-500 transition hover:bg-zinc-100 hover:text-zinc-900 sm:hidden">
                 <span class="sr-only">Ouvrir le menu</span>
 
                 <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24" aria-hidden="true">
@@ -82,7 +82,7 @@
         </div>
     </x-ui.container>
 
-    <div id="menu-admin-mobile" x-show="open" x-cloak class="border-t border-zinc-200 sm:hidden">
+    <div id="menu-admin-mobile" x-show="open" x-cloak class="border-t border-zinc-900/5 sm:hidden">
         <div class="py-2">
             <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                 Vue d'ensemble
@@ -105,7 +105,7 @@
             </x-responsive-nav-link>
         </div>
 
-        <div class="border-t border-zinc-200 py-2">
+        <div class="border-t border-zinc-900/5 py-2">
             <div class="flex items-center gap-3 px-4 py-3">
                 <x-ui.avatar :user="Auth::user()" size="h-10 w-10" />
 

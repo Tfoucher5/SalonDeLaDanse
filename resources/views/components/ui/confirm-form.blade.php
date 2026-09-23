@@ -33,7 +33,7 @@
              aria-hidden="true"></div>
 
         <div x-show="open" x-transition
-             class="relative w-full max-w-md rounded-lg border border-zinc-200 bg-white p-5 shadow-overlay sm:p-6">
+             class="relative w-full max-w-md rounded-2xl bg-white p-5 ring-1 ring-zinc-900/5 shadow-overlay sm:p-6">
             <h2 class="text-lg font-semibold text-zinc-900">{{ $title }}</h2>
 
             @isset($body)

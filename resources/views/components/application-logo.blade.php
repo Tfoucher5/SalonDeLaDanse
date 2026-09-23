@@ -1,13 +1,11 @@
 {{--
-    Marque de la plateforme : trois barres d'un planning, de la plus longue a la
-    plus courte. Neutre par construction — l'identite vient du logo et du
-    contenu, l'accent indigo reste reserve a ce sur quoi on peut cliquer.
+    Logotype officiel du Salon, fourni en blanc sur transparent.
+
+    Il sert de masque plutot que d'image : la couleur vient de `currentColor`,
+    donc d'une classe `text-*` du design system. Le meme fichier s'ecrit ainsi
+    en encre sur la porcelaine, et en blanc sur un bandeau colore.
 --}}
 
-<svg viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
-     {{ $attributes->merge(['class' => 'shrink-0']) }}>
-    <rect width="32" height="32" rx="8" class="fill-zinc-900" />
-    <rect x="8" y="9" width="16" height="3.5" rx="1.75" class="fill-white" />
-    <rect x="8" y="14.25" width="11" height="3.5" rx="1.75" class="fill-white" opacity="0.72" />
-    <rect x="8" y="19.5" width="7" height="3.5" rx="1.75" class="fill-white" opacity="0.48" />
-</svg>
+<span role="img" aria-label="{{ config('app.name') }}"
+      style="-webkit-mask: url('{{ asset('images/logo-salon-de-la-danse.png') }}') center / contain no-repeat; mask: url('{{ asset('images/logo-salon-de-la-danse.png') }}') center / contain no-repeat;"
+      {{ $attributes->merge(['class' => 'inline-block aspect-[1350/726] shrink-0 bg-current text-zinc-900']) }}></span>
