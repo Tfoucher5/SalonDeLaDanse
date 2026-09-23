@@ -29,6 +29,7 @@ function registrationPayload(array $overrides = []): array
         'last_name' => 'Durand',
         'email' => 'marie.durand@example.test',
         'phone' => '06 12 34 56 78',
+        'birth_date' => '1990-05-14',
         'photo' => fakePhoto(),
         'password' => 'mot-de-passe-solide',
         'password_confirmation' => 'mot-de-passe-solide',
@@ -51,6 +52,7 @@ it('cree le compte benevole, consomme le code et stocke la photo', function () {
 
     expect($user->full_name)->toBe('Marie Durand')
         ->and($user->phone)->toBe('06 12 34 56 78')
+        ->and($user->birth_date->toDateString())->toBe('1990-05-14')
         ->and($user->role)->toBe(UserRole::Volunteer)
         ->and($user->edition_id)->toBe($this->edition->id)
         ->and($user->profileIsLocked())->toBeTrue()
@@ -142,12 +144,12 @@ it('refuse une photo trop lourde', function () {
     ]))->assertSessionHasErrors('photo');
 });
 
-it('exige prenom, nom, e-mail et telephone', function (string $field) {
+it('exige prenom, nom, e-mail, telephone et date de naissance', function (string $field) {
     $this->post(route('register'), registrationPayload([$field => '']))
         ->assertSessionHasErrors($field);
 
     expect(User::count())->toBe(0);
-})->with(['first_name', 'last_name', 'email', 'phone']);
+})->with(['first_name', 'last_name', 'email', 'phone', 'birth_date']);
 
 it('refuse un telephone au format inattendu', function () {
     $this->post(route('register'), registrationPayload(['phone' => 'appelez-moi']))
@@ -159,4 +161,17 @@ it('refuse une adresse e-mail deja utilisee', function () {
 
     $this->post(route('register'), registrationPayload())
         ->assertSessionHasErrors('email');
+});
+
+it('refuse une date de naissance dans le futur', function () {
+    $this->post(route('register'), registrationPayload([
+        'birth_date' => today()->addDay()->toDateString(),
+    ]))->assertSessionHasErrors('birth_date');
+
+    expect(User::count())->toBe(0);
+});
+
+it('refuse une date de naissance qui n est pas une date', function () {
+    $this->post(route('register'), registrationPayload(['birth_date' => '14 mai']))
+        ->assertSessionHasErrors('birth_date');
 });

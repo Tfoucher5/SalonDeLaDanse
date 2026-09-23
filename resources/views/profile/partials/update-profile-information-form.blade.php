@@ -21,6 +21,17 @@
         <x-ui.field :label="__('Phone')" for="phone" :messages="$errors->get('phone')" required>
             <x-text-input id="phone" name="phone" type="tel" :value="old('phone', $user->phone)" required autocomplete="tel" />
         </x-ui.field>
+        <div>
+            <x-input-label for="phone" :value="__('Phone')" />
+            <x-text-input id="phone" name="phone" type="tel" class="mt-1 block w-full" :value="old('phone', $user->phone)" required autocomplete="tel" />
+            <x-input-error class="mt-2" :messages="$errors->get('phone')" />
+        </div>
+
+        <div>
+            <x-input-label for="birth_date" :value="__('Date of birth')" />
+            <x-text-input id="birth_date" name="birth_date" type="date" class="mt-1 block w-full" :value="old('birth_date', $user->birth_date?->toDateString())" required autocomplete="bday" max="{{ today()->toDateString() }}" />
+            <x-input-error class="mt-2" :messages="$errors->get('birth_date')" />
+        </div>
 
         <x-ui.field :label="__('Email')" for="email" :messages="$errors->get('email')" required>
             <x-text-input id="email" name="email" type="email" :value="old('email', $user->email)" required autocomplete="username" />
