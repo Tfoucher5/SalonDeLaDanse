@@ -107,3 +107,11 @@ it('publie la planche de reference hors production', function () {
         ->assertOk()
         ->assertSee('Charte graphique');
 });
+
+it('declare un favicon qui suit le theme clair ou sombre', function () {
+    $head = File::get(resource_path('views/components/layout/head.blade.php'));
+
+    expect($head)->toContain("asset('favicon.svg')")
+        ->and($head)->toContain("asset('apple-touch-icon.png')")
+        ->and(File::get(public_path('favicon.svg')))->toContain('prefers-color-scheme: dark');
+});
