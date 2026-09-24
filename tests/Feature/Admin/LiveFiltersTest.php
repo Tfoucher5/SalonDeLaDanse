@@ -23,6 +23,7 @@ function ecransFiltres(): array
     return [
         route('admin.volunteers.index'),
         route('admin.planning'),
+        route('admin.badges.index'),
     ];
 }
 

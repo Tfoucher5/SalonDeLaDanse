@@ -26,6 +26,7 @@
                     'admin.planning' => 'Planning du Salon',
                     'admin.volunteers.index' => 'Bénévoles',
                     'admin.missions.index' => 'Missions',
+                    'admin.badges.index' => 'Badges',
                 ] as $routeName => $label)
                     <li>
                         <a href="{{ route($routeName) }}" class="inline-flex min-h-[2rem] items-center text-zinc-500 transition hover:text-primary">{{ $label }}</a>

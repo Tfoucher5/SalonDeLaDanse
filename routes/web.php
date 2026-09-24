@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Admin\BadgeController as AdminBadgeController;
+use App\Http\Controllers\Admin\BadgeScanController as AdminBadgeScanController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\ExportController as AdminExportController;
 use App\Http\Controllers\Admin\MissionController as AdminMissionController;
@@ -7,6 +9,7 @@ use App\Http\Controllers\Admin\PlanningController as AdminPlanningController;
 use App\Http\Controllers\Admin\VolunteerController as AdminVolunteerController;
 use App\Http\Controllers\Admin\VolunteerCredentialsController as AdminVolunteerCredentialsController;
 use App\Http\Controllers\Admin\VolunteerPlanningController as AdminVolunteerPlanningController;
+use App\Http\Controllers\BadgeVerificationController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DesignSystemController;
 use App\Http\Controllers\LegalNoticeController;
@@ -21,6 +24,13 @@ Route::get('/', function () {
 });
 
 Route::get('/mentions-legales', LegalNoticeController::class)->name('legal.notice');
+
+// La page ouverte par le QR code d'un badge, publique. `signed` refuse une
+// adresse retouchee : on ne passe pas d'un badge a l'autre en changeant l'id.
+Route::get('/badges/{edition}/{volunteer}', BadgeVerificationController::class)
+    ->whereNumber(['edition', 'volunteer'])
+    ->middleware(['signed', 'throttle:60,1'])
+    ->name('badges.verify');
 
 // Espace benevole. 'volunteer.space' renvoie l administrateur chez lui : ces
 // ecrans ne lui montreraient qu un planning qu il n a pas a composer.
@@ -89,6 +99,16 @@ Route::middleware(['auth', 'verified', 'can:admin'])
             ->name('volunteers.shifts.store');
         Route::delete('/volunteers/{volunteer}/shifts/{shift}', [AdminVolunteerPlanningController::class, 'destroy'])
             ->name('volunteers.shifts.destroy');
+
+        // Badges a imprimer : une planche selon les criteres de recherche ou
+        // une selection cochee, et le badge seul depuis la fiche.
+        Route::get('/badges', [AdminBadgeController::class, 'index'])->name('badges.index');
+        Route::post('/badges', [AdminBadgeController::class, 'download'])->name('badges.download');
+
+        // Le scanner de l'entree : le verdict d'un badge en JSON, pour la
+        // fenetre de scan ouverte depuis n'importe quel ecran du back-office.
+        Route::get('/badges/scan', AdminBadgeScanController::class)->name('badges.scan');
+        Route::get('/volunteers/{volunteer}/badge', [AdminBadgeController::class, 'show'])->name('volunteers.badge');
 
         // Exports. Pas d ecran dedie : la fenetre d export de chaque page
         // soumet ici ses criteres, la feuille et le format.

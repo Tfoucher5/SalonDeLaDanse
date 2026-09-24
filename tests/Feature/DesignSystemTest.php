@@ -47,7 +47,12 @@ it('n utilise aucune palette Tailwind hors zinc et tokens du design system', fun
 it('n ecrit aucune couleur en dur dans les vues', function () {
     // Les hexadecimaux de la charte vivent dans tailwind.config.js et dans le
     // controleur de la planche de reference, jamais dans une vue.
-    expect(viewsMatching('/#[0-9A-Fa-f]{6}\b/', except: ['components/layout/head.blade.php']))->toBe([]);
+    expect(viewsMatching('/#[0-9A-Fa-f]{6}\b/', except: [
+        'components/layout/head.blade.php',
+        // Rendue par dompdf, ou Tailwind ne tourne pas : ses tokens sont
+        // recopies en CSS, seule facon de porter la charte dans le PDF.
+        'admin/badges/pdf.blade.php',
+    ]))->toBe([]);
 });
 
 it('ne met jamais un bouton ou un champ en capsule', function () {

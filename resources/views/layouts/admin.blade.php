@@ -48,5 +48,9 @@
                  doit pas changer de taille d'un ecran a l'autre. --}}
             @include('layouts.partials.admin-footer', ['width' => 'xl'])
         </div>
+
+        {{-- Le scanner de badges, ouvert depuis la barre du haut de chaque
+             ecran : a l'entree du Salon, on scanne sans changer de page. --}}
+        <x-admin.badge-scanner />
     </body>
 </html>
