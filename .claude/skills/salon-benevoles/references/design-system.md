@@ -21,6 +21,11 @@ l'équipe est de pourvoir chaque poste. Tout indicateur de remplissage va du rou
 (`gauge-free`, complet ou objectif atteint). Les jauges de places partent pleines et
 se vident à chaque inscription, comme côté bénévole.
 
+Sur la vue d'ensemble admin, l'échelle est **continue** : la teinte glisse du
+`danger` à `gauge-tight` (50 %) puis à `gauge-free` (100 %) selon le taux de
+remplissage (`.staffing-scale` + `--fill` dans `app.css`, jauge `level="scale"`,
+cartes `x-admin.kpi`). Plus c'est plein, plus c'est vert.
+
 ## Palette (tokens `tailwind.config.js`)
 
 | Token | Hex | Usage |

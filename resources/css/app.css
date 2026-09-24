@@ -49,6 +49,40 @@
             radial-gradient(60rem 28rem at 85% -8%, theme('colors.primary.soft') 0%, transparent 70%),
             radial-gradient(40rem 22rem at 0% 110%, theme('colors.gauge.free / 8%') 0%, transparent 70%);
     }
+
+    /* Echelle continue de pourvoi du back-office : plus c'est plein, plus
+       c'est vert. `--fill` (0 a 100) est pose sur l'element ou un parent ; la
+       teinte glisse du rouge `danger` a l'ambre `gauge-tight` a mi-course, puis
+       au vert `gauge-free` une fois tout pourvu. Le pourcentage reste ecrit a
+       cote : la couleur ne fait que confirmer. */
+    .staffing-scale {
+        --fill: 0;
+        --staffing-color: color-mix(
+            in oklch,
+            theme('colors.gauge.free') calc(clamp(0, var(--fill) - 50, 50) * 2%),
+            color-mix(in oklch, theme('colors.gauge.tight') calc(clamp(0, var(--fill), 50) * 2%), theme('colors.danger'))
+        );
+    }
+
+    .bg-staffing {
+        background-color: theme('colors.gauge.tight');
+        background-color: var(--staffing-color);
+    }
+
+    .bg-staffing-soft {
+        background-color: theme('colors.zinc.100');
+        background-color: color-mix(in oklch, var(--staffing-color) 12%, white);
+    }
+
+    .text-staffing {
+        color: theme('colors.gauge.tight');
+        color: var(--staffing-color);
+    }
+
+    .stroke-staffing {
+        stroke: theme('colors.gauge.tight');
+        stroke: var(--staffing-color);
+    }
 }
 
 /* ------------------------------------------------------------------------

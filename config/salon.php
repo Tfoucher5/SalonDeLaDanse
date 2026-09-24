@@ -113,7 +113,7 @@ return [
         'default_shift_capacity' => (int) env('SALON_DEFAULT_SHIFT_CAPACITY', 4),
         'invitation_codes' => (int) env('SALON_SEED_INVITATION_CODES', 20),
         // Benevoles fictifs de VolunteerSeeder, a lancer a part en developpement.
-        'volunteers' => (int) env('SALON_SEED_VOLUNTEERS', 100),
+        'volunteers' => (int) env('SALON_SEED_VOLUNTEERS', 150),
     ],
 
 ];
