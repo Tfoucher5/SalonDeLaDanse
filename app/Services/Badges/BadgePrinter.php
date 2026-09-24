@@ -17,6 +17,7 @@ use BaconQrCode\Writer;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Barryvdh\DomPDF\PDF as PdfDocument;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
 use RuntimeException;
@@ -183,6 +184,11 @@ class BadgePrinter
     public function pdf(Collection $volunteers, Edition $edition): PdfDocument
     {
         $perSheet = self::SHEET['columns'] * self::SHEET['rows'];
+
+        // dompdf y copie Plus Jakarta Sans au premier rendu mais ne crée pas le
+        // dossier : sans lui, les badges sortiraient dans sa police par défaut.
+        // Le déploiement ne touche jamais à `storage/`, d'où cette garde.
+        File::ensureDirectoryExists(config('dompdf.options.font_dir'));
 
         return Pdf::loadView('admin.badges.pdf', [
             'edition' => $edition,
