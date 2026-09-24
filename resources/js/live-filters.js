@@ -9,13 +9,20 @@
  * On ne recharge pas la page : le curseur resterait au debut du champ de
  * recherche a chaque frappe, ce qui rend la saisie impraticable.
  *
- * Tout passe par `$root`, jamais par `$el` : les ecouteurs sont poses sur les
- * champs, et Alpine resout `$el` vers l'element qui declenche l'evenement. Une
- * liste deroulante n'est pas un formulaire, et `new FormData(<select>)` leve.
+ * Le formulaire est retenu une fois pour toutes a l'initialisation. Ni `$el`
+ * ni `$root` ne conviennent dans `refresh()` : Alpine les resout depuis le
+ * champ qui declenche l'evenement, et chaque liste deroulante (`selectMenu`)
+ * ou bloc depliable porte son propre `x-data`. On obtiendrait un <div>, et
+ * `new FormData(<div>)` leve. Il est garde hors des donnees du composant :
+ * Alpine envelopperait sinon l'element dans un proxy, et `submit()` ou
+ * `FormData` le refuseraient.
  *
  * @param {string} targetId identifiant de la zone a remplacer
  */
 export default function liveFilters(targetId) {
+    /** @type {HTMLFormElement|null} */
+    let form = null;
+
     return {
         /** La requete en cours, annulable. */
         controller: null,
@@ -23,6 +30,15 @@ export default function liveFilters(targetId) {
         busy: false,
 
         init() {
+            form = this.$el;
+
+            // Entree dans le champ de recherche soumettrait le formulaire et
+            // rechargerait la page : on filtre en arriere-plan a la place.
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                this.refresh();
+            });
+
             // Le bouton n'a de sens que sans JavaScript. S'il reste, un clic
             // rechargerait la page et ferait perdre le focus.
             this.$refs.submit?.remove();
@@ -34,7 +50,7 @@ export default function liveFilters(targetId) {
             // Zone introuvable : on retombe sur la soumission classique plutot
             // que de ne rien faire du tout.
             if (target === null) {
-                this.$root.submit();
+                form.submit();
 
                 return;
             }
@@ -71,7 +87,7 @@ export default function liveFilters(targetId) {
                 window.history.replaceState({}, '', url);
             } catch (error) {
                 if (error.name !== 'AbortError') {
-                    this.$root.submit();
+                    form.submit();
                 }
             } finally {
                 this.busy = false;
@@ -85,7 +101,7 @@ export default function liveFilters(targetId) {
         url() {
             const params = new URLSearchParams();
 
-            new FormData(this.$root).forEach((value, key) => {
+            new FormData(form).forEach((value, key) => {
                 if (value !== '') {
                     params.append(key, value);
                 }
@@ -93,7 +109,7 @@ export default function liveFilters(targetId) {
 
             const query = params.toString();
 
-            return query === '' ? this.$root.action : `${this.$root.action}?${query}`;
+            return query === '' ? form.action : `${form.action}?${query}`;
         },
     };
 }
