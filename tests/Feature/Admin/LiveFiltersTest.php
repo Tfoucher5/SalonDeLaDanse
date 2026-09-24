@@ -39,7 +39,8 @@ it('pose la zone de resultats que chaque formulaire pretend rafraichir', functio
         // sur l'URL en cours d'iteration.
         expect($matches[1])->not->toBeEmpty();
 
-        foreach ($matches[1] as $target) {
+        // Plusieurs zones peuvent etre rejouees, separees par des espaces.
+        foreach (preg_split('/\s+/', implode(' ', $matches[1])) as $target) {
             expect($html)->toContain('id="'.$target.'"');
         }
     }

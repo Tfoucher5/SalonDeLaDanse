@@ -40,7 +40,7 @@ cartes `x-admin.kpi`). Plus c'est plein, plus c'est vert.
 | `primary-hover` | `#9A2C19` | Survol |
 | `primary-bright` | `#E0533C` | Terracotta de marque : logo, anneau de focus, puces décoratives. **Jamais en fond de texte blanc** (3,6:1) |
 | `primary-soft` | `#FDEBE7` | Fond de badge, onglet actif, halos |
-| `plum` / `plum-soft` | `#6C2E58` / `#F6E8F1` | États du planning (Brouillon), étiquettes de section |
+| `plum` / `plum-soft` | `#6C2E58` / `#F6E8F1` | États du planning (Non validé), étiquettes de section |
 | `gauge-free` | `#0F766E` | Places disponibles |
 | `gauge-tight` | `#B45309` | Presque complet |
 | `gauge-full` | `#716B70` | Complet ou indisponible |

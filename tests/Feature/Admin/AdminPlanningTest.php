@@ -93,6 +93,33 @@ it('filtre par mission sans perdre le jour', function () {
     );
 });
 
+it('recherche un benevole par son nom sur la journee', function () {
+    $autre = creneau($this->edition, position: 2, date: '2027-05-14', capacity: 4);
+    $autre->mission->update(['name' => 'Vestiaires']);
+
+    $response = planning(['day' => '2027-05-14', 'name' => 'dorel'])
+        ->assertOk()
+        ->assertSee('Camille Dorel')
+        // La recherche survit au changement de jour.
+        ->assertSee(e(route('admin.planning', ['day' => '2027-05-15', 'name' => 'dorel'])), escape: false);
+
+    // « Vestiaires » reste proposee dans la liste des missions, mais sa carte
+    // de creneau disparait : personne n'y porte ce nom.
+    expect($response->getContent())->not->toMatch('/<h3[^>]*>\s*Vestiaires/');
+});
+
+it('recherche une mission par son nom', function () {
+    planning(['day' => '2027-05-15', 'name' => 'billet'])
+        ->assertOk()
+        ->assertSee('Billetterie')
+        ->assertSee('Naim Belkacem');
+
+    planning(['day' => '2027-05-15', 'name' => 'accueil'])
+        ->assertOk()
+        ->assertDontSee('Naim Belkacem')
+        ->assertSee('Aucun créneau ne correspond à la recherche');
+});
+
 it('mene de chaque nom a la fiche du benevole', function () {
     planning(['day' => '2027-05-14'])
         ->assertOk()

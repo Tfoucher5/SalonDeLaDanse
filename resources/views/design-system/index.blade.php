@@ -94,7 +94,7 @@
     <x-ui.card title="Badges" subtitle="La couleur confirme, le mot informe.">
         <div class="flex flex-wrap items-center gap-3">
             <x-ui.badge>Neutre</x-ui.badge>
-            <x-ui.badge tone="primary">Brouillon</x-ui.badge>
+            <x-ui.badge tone="primary">Non validé</x-ui.badge>
             <x-ui.badge tone="primary-outline">Réservé</x-ui.badge>
             <x-ui.badge tone="free">Validé</x-ui.badge>
             <x-ui.badge tone="tight">Presque complet</x-ui.badge>
@@ -172,7 +172,7 @@
                 <th scope="col">Statut</th>
             </x-slot>
 
-            @foreach ([['Camille Doré', 'Accueil', 'Sam. 08:30 - 10:00', 'free', 'Validé'], ['Naïm Belkacem', 'Billetterie', 'Sam. 14:00 - 16:00', 'primary', 'Brouillon'], ['Alex Rivière', 'Logistique', 'Dim. 10:00 - 12:00', 'full', 'Verrouillé']] as [$name, $mission, $schedule, $tone, $status])
+            @foreach ([['Camille Doré', 'Accueil', 'Sam. 08:30 - 10:00', 'free', 'Validé'], ['Naïm Belkacem', 'Billetterie', 'Sam. 14:00 - 16:00', 'primary', 'Non validé'], ['Alex Rivière', 'Logistique', 'Dim. 10:00 - 12:00', 'full', 'Verrouillé']] as [$name, $mission, $schedule, $tone, $status])
                 <tr class="tabular-grid">
                     <td>{{ $name }}</td>
                     <td>{{ $mission }}</td>

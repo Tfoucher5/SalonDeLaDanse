@@ -59,6 +59,11 @@ class VolunteerSeeder extends Seeder
     private const RESTRICTED_FILL = [0.7, 0];
 
     /**
+     * L'echec du service de portraits a-t-il deja ete signale ?
+     */
+    private bool $photoFailureReported = false;
+
+    /**
      * Des benevoles fictifs et leurs plannings, pour tester l'application et
      * le back-office avec des jauges vraiment remplies.
      *
@@ -116,8 +121,10 @@ class VolunteerSeeder extends Seeder
             }
         }
 
-        $this->completePopularMissions($rules, $shifts, $drafts);
+        // Les postes restreints d'abord : completer les missions prisees
+        // epuiserait les brouillons avant que l'equipe ne s'en serve.
         $this->assignRestrictedShifts($rules, $edition, $drafts);
+        $this->completePopularMissions($rules, $shifts, $drafts);
 
         $this->command?->info("{$missing} benevoles fictifs crees (mot de passe : password).");
     }
@@ -246,7 +253,15 @@ class VolunteerSeeder extends Seeder
         try {
             // IPv4 impose : sur certains postes, la route IPv6 expire sans repondre.
             $response = Http::withOptions(['force_ip_resolve' => 'v4'])->timeout(5)->get($url);
-        } catch (ConnectionException) {
+        } catch (ConnectionException $exception) {
+            // Signale une seule fois : sans message, 150 benevoles sans photo
+            // passent pour un oubli du seeder. Le cas type sous Windows est un
+            // PHP sans certificats racines (`curl.cainfo` vide, erreur cURL 60).
+            if (! $this->photoFailureReported) {
+                $this->photoFailureReported = true;
+                $this->command?->warn('Portraits indisponibles, benevoles crees sans photo : '.$exception->getMessage());
+            }
+
             return null;
         }
 

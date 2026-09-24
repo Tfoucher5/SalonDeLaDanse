@@ -44,7 +44,7 @@ class PlanningController extends Controller
             'timeSlots' => $edition?->timeSlots()->get() ?? collect(),
             'shiftsByTimeSlot' => $edition === null || $selectedDay === null
                 ? collect()
-                : $this->planning->dayByTimeSlot($edition, $selectedDay->toDateString(), $criteria['mission']),
+                : $this->planning->dayByTimeSlot($edition, $selectedDay->toDateString(), $criteria['mission'], $criteria['name']),
             'dayFillRate' => $edition === null || $selectedDay === null
                 ? null
                 : $this->overview->fillRateByDay($edition)->firstWhere('key', $selectedDay->toDateString()),

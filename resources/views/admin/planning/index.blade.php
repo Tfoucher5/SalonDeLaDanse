@@ -14,65 +14,90 @@
             Le planning s'affichera ici dès qu'une édition du Salon sera ouverte.
         </x-ui.empty>
     @else
-        {{-- Filtrage sans clic ; sans JavaScript, le bouton reste. Une seule
-             liste : pas besoin d'une carte entiere autour. --}}
+        {{-- Barre de filtres d'un seul tenant (maquette « Planning Admin,
+             en-tete et filtre integres ») : les jours a gauche, mission,
+             recherche et export a droite, qui s'etirent pour occuper la ligne.
+             Filtrage sans clic ; sans JavaScript, le bouton « Filtrer » reste.
+
+             Les onglets de jour et l'export portent les criteres courants :
+             ils sont rejoues avec les resultats (`liveFilters`).
+
+             Sous `lg`, seuls les jours suivent le defilement. Un element
+             collant ne sort pas de son parent : la carte s'efface donc
+             (`contents`) pour que les jours collent a la page entiere. --}}
         <form method="GET"
               action="{{ route('admin.planning') }}"
-              x-data="liveFilters('resultats-planning')"
+              x-data="liveFilters('resultats-planning jours-planning export-planning')"
               :aria-busy="busy"
-              class="flex flex-wrap items-center gap-3">
+              class="max-lg:contents lg:sticky lg:top-20 lg:z-30 lg:flex lg:items-center lg:gap-2 lg:rounded-2xl lg:bg-white lg:p-2 lg:shadow-card lg:ring-1 lg:ring-zinc-900/5">
             <input type="hidden" name="day" value="{{ $selectedDay?->toDateString() }}">
 
-            <label for="filtre-mission" class="text-sm font-semibold text-zinc-500">Mission</label>
-
-            <x-ui.select x-on:change="refresh()" id="filtre-mission" name="mission" class="sm:w-80">
-                <option value="">Toutes les missions</option>
-
-                @foreach ($missions as $mission)
-                    <option value="{{ $mission->id }}" @selected($criteria['mission'] === $mission->id)>
-                        {{ $mission->name }}{{ $mission->is_public ? '' : ' (restreinte)' }}
-                    </option>
-                @endforeach
-            </x-ui.select>
-
-            <x-ui.button variant="primary" size="touch" type="submit" x-ref="submit">Filtrer</x-ui.button>
-
-            <span x-show="busy" x-cloak class="text-sm text-zinc-500">Recherche…</span>
-
-            @error('mission')
-                <p class="w-full text-sm text-danger">{{ $message }}</p>
-            @enderror
-        </form>
-
-        {{-- Zone rejouee par le filtrage. Les onglets de jour en font partie :
-             ils portent le filtre courant dans leur lien. --}}
-        <div id="resultats-planning" class="space-y-5 sm:space-y-6" aria-live="polite">
-
-        {{-- Navigation par jour, la meme commande segmentee que chez le
-             benevole. Le filtre par mission est conserve d'un jour a l'autre. --}}
-        <nav class="sticky top-16 z-30 -mx-4 flex items-center justify-between gap-2 bg-zinc-50/90 px-4 py-2 backdrop-blur-md sm:mx-0 sm:gap-3 sm:px-0" aria-label="Jours du Salon">
-            <div class="flex min-w-0 flex-1 gap-1 rounded-2xl bg-zinc-100 p-1.5 md:min-w-[26rem] md:flex-none">
-                @foreach ($days as $index => $day)
-                    <x-planning.day-tab
-                        :day="$day"
-                        :index="$index"
-                        :selected="$selectedDay?->isSameDay($day) ?? false"
-                        route="admin.planning"
-                        :params="array_filter(['mission' => $criteria['mission']])" />
-                @endforeach
+            <div class="sticky top-16 z-30 -mx-4 bg-zinc-50/90 px-4 py-2 backdrop-blur-md sm:mx-0 sm:px-0 lg:static lg:m-0 lg:w-[26rem] lg:shrink-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+                <nav id="jours-planning" x-on:click="follow($event, 'day')" class="flex gap-1 rounded-xl bg-zinc-100 p-1" aria-label="Jours du Salon">
+                    @foreach ($days as $index => $day)
+                        <x-planning.day-tab
+                            :day="$day"
+                            :index="$index"
+                            :selected="$selectedDay?->isSameDay($day) ?? false"
+                            route="admin.planning"
+                            :params="array_filter(['mission' => $criteria['mission'], 'name' => $criteria['name']])" />
+                    @endforeach
+                </nav>
             </div>
 
-            {{-- Dans la zone rejouee : l'export suit la mission filtree et le
-                 jour affiche. --}}
-            @if ($selectedDay !== null)
-                <x-admin.export-dialog
-                    :datasets="[ExportDataset::Missions, ExportDataset::Planning]"
-                    :criteria="['mission' => $criteria['mission']]"
-                    :missions="$missions"
-                    :day="$selectedDay"
-                    class="hidden shrink-0 sm:block" />
+            <div class="mt-2 flex min-w-0 flex-1 flex-col gap-2 sm:flex-row sm:items-center lg:mt-0">
+                <label for="filtre-mission" class="sr-only">Mission</label>
+
+                <x-ui.select x-on:change="refresh()" id="filtre-mission" name="mission" class="sm:flex-1">
+                    <option value="">Toutes les missions ({{ $missions->count() }})</option>
+
+                    @foreach ($missions as $mission)
+                        <option value="{{ $mission->id }}" @selected($criteria['mission'] === $mission->id)>
+                            {{ $mission->name }}{{ $mission->is_public ? '' : ' (restreinte)' }}
+                        </option>
+                    @endforeach
+                </x-ui.select>
+
+                <label for="filtre-recherche" class="sr-only">Rechercher une mission ou un bénévole</label>
+
+                <div class="relative sm:flex-1">
+                    <svg class="pointer-events-none absolute start-4 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.45 4.39l3.08 3.08a.75.75 0 11-1.06 1.06l-3.08-3.08A7 7 0 012 9z" clip-rule="evenodd" />
+                    </svg>
+
+                    {{-- La saisie libre attend une pause dans la frappe ; la
+                         liste deroulante part des la selection. --}}
+                    <x-text-input id="filtre-recherche" name="name" type="search"
+                                  :value="$criteria['name']"
+                                  placeholder="Rechercher mission ou bénévole…"
+                                  class="ps-10"
+                                  x-on:input.debounce.400ms="refresh()" />
+                </div>
+
+                <x-ui.button variant="primary" type="submit" x-ref="submit">Filtrer</x-ui.button>
+
+                {{-- L'export suit la mission filtree et le jour affiche. --}}
+                <div id="export-planning" class="shrink-0">
+                    @if ($selectedDay !== null)
+                        <x-admin.export-dialog
+                            :datasets="[ExportDataset::Missions, ExportDataset::Planning]"
+                            :criteria="['mission' => $criteria['mission']]"
+                            :missions="$missions"
+                            :day="$selectedDay"
+                            class="[&>button]:w-full" />
+                    @endif
+                </div>
+            </div>
+
+            @if ($errors->hasAny(['mission', 'name']))
+                <p class="w-full px-2 text-sm text-danger">{{ $errors->first('mission') ?: $errors->first('name') }}</p>
             @endif
-        </nav>
+        </form>
+
+        {{-- Zone rejouee par le filtrage, et par les onglets de jour : un
+             changement de jour ne recharge pas la page, la journee glisse
+             depuis le cote choisi (`follow`, live-filters.js). --}}
+        <div id="resultats-planning" class="planning-day space-y-5 sm:space-y-6" aria-live="polite">
 
         @if ($selectedDay === null)
             <x-ui.empty title="Cette édition ne couvre aucune journée">
@@ -134,8 +159,8 @@
             </div>
 
             {{-- Puis les tranches horaires, repliables : la premiere s'ouvre
-                 d'emblee, les autres a la demande. Filtree sur une mission, la
-                 journee est courte et tout s'ouvre. --}}
+                 d'emblee, les autres a la demande. Filtree sur une mission ou
+                 par une recherche, la journee est courte et tout s'ouvre. --}}
             <div class="space-y-3">
             @foreach ($timeSlots as $timeSlot)
                 @php
@@ -145,7 +170,7 @@
                     $staffing = StaffingLevel::fromCounts($enrolled, $places);
                 @endphp
 
-                <details @if ($loop->first || $criteria['mission']) open @endif
+                <details @if ($loop->first || $criteria['mission'] || $criteria['name']) open @endif
                          class="group rounded-2xl bg-white/70 ring-1 ring-zinc-900/5 open:bg-transparent open:ring-0">
                     <summary class="flex min-h-touch cursor-pointer list-none items-center justify-between gap-3 rounded-2xl bg-white px-4 py-3 shadow-card ring-1 ring-zinc-900/5 transition hover:ring-zinc-900/10 sm:px-5 [&::-webkit-details-marker]:hidden">
                         <span class="min-w-0">
@@ -178,7 +203,11 @@
                     <div class="slot-body pb-2 pt-3">
                         @if ($shifts->isEmpty())
                             <p class="rounded-2xl border border-dashed border-zinc-300 p-4 text-sm text-zinc-500">
-                                Aucune mission n'est ouverte sur cette tranche horaire.
+                                @if ($criteria['name'])
+                                    Aucun créneau ne correspond à la recherche sur cette tranche horaire.
+                                @else
+                                    Aucune mission n'est ouverte sur cette tranche horaire.
+                                @endif
                             </p>
                         @else
                             <div class="grid gap-3 sm:gap-4 md:grid-cols-2 lg:grid-cols-3">

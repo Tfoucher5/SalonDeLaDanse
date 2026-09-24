@@ -51,11 +51,14 @@ enum PlanningState: string
 
     /**
      * Libellé affichable dans l'interface.
+     *
+     * Le planning modifiable se dit « Non validé », des deux côtés : le mot
+     * « brouillon » laissait croire au bénévole que rien n'était enregistré.
      */
     public function label(): string
     {
         return match ($this) {
-            self::Draft => 'Brouillon',
+            self::Draft => 'Non validé',
             self::Validated => 'Validé',
             self::Locked => 'Verrouillé',
             self::Closed => 'Inscriptions fermées',
@@ -79,18 +82,12 @@ enum PlanningState: string
     }
 
     /**
-     * Libellé vu par l'équipe organisatrice.
-     *
-     * Côté back-office, un brouillon est un planning qui attend sa
-     * validation : c'est ce qui reste à faire, pas l'état de travail du
-     * bénévole.
+     * Libellé vu par l'équipe organisatrice : le même que celui du bénévole,
+     * seul le ton du badge change (`adminTone`).
      */
     public function adminLabel(): string
     {
-        return match ($this) {
-            self::Draft => 'Non validé',
-            default => $this->label(),
-        };
+        return $this->label();
     }
 
     /**

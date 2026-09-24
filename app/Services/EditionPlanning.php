@@ -25,9 +25,12 @@ class EditionPlanning
     /**
      * Les créneaux de l'édition, bénévoles chargés en une seule requête.
      *
+     * `$search` retient les créneaux dont la mission ou l'un des bénévoles
+     * inscrits porte ce texte dans son nom.
+     *
      * @return Collection<int, Shift>
      */
-    public function shifts(Edition $edition, ?int $missionId = null, ?string $day = null): Collection
+    public function shifts(Edition $edition, ?int $missionId = null, ?string $day = null, ?string $search = null): Collection
     {
         return $edition->shifts()
             ->with([
@@ -37,6 +40,15 @@ class EditionPlanning
             ])
             ->when($missionId, fn (Builder $query, int $mission) => $query->where('mission_id', $mission))
             ->when($day, fn (Builder $query, string $date) => $query->where('date', $date))
+            ->when($search, fn (Builder $query, string $text) => $query->where(
+                fn (Builder $matching) => $matching
+                    ->whereHas('mission', fn (Builder $mission) => $mission->where('name', 'like', '%'.$text.'%'))
+                    ->orWhereHas('volunteers', fn (Builder $volunteer) => $volunteer->where(
+                        fn (Builder $named) => $named
+                            ->where('first_name', 'like', '%'.$text.'%')
+                            ->orWhere('last_name', 'like', '%'.$text.'%')
+                    ))
+            ))
             ->get();
     }
 
@@ -48,9 +60,9 @@ class EditionPlanning
      *
      * @return Collection<int, Collection<int, Shift>>
      */
-    public function dayByTimeSlot(Edition $edition, string $day, ?int $missionId = null): Collection
+    public function dayByTimeSlot(Edition $edition, string $day, ?int $missionId = null, ?string $search = null): Collection
     {
-        return $this->shifts($edition, $missionId, $day)
+        return $this->shifts($edition, $missionId, $day, $search)
             ->sortBy(fn (Shift $shift): int => $shift->mission->position)
             ->groupBy('time_slot_id');
     }

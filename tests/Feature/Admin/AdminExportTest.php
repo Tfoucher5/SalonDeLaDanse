@@ -84,7 +84,7 @@ it('sort le planning general en CSV, lisible par Excel en francais', function ()
     expect($content)->toStartWith("\u{FEFF}")
         ->and($content)->toContain('Date;Jour;Début;Fin;Mission;Accès;Nom;Prénom;E-mail;Téléphone;Attribution;"Statut du planning"')
         ->and($content)->toContain('2027-05-14;Vendredi;08:30;10:00;"Accueil exposants";Ouverte;Dorel;Camille;camille.dorel@example.test;0611223344;Bénévole;Validé')
-        // Naim est « Verrouillé » et non « Brouillon » : l'attribution de
+        // Naim est « Verrouillé » et non « Non validé » : l'attribution de
         // l'équipe organisatrice ferme son planning, l'export le dit.
         ->and($content)->toContain('2027-05-15;Samedi;12:00;14:00;Billetterie;Restreinte;Belkacem;Naim;naim.belkacem@example.test;0655667788;"Équipe organisatrice";Verrouillé');
 });

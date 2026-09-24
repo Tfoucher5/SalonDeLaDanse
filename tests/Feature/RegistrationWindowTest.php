@@ -54,12 +54,13 @@ it('ferme la composition du planning apres validation definitive', function () {
     $this->actingAs($user)->get('/_test/planning')->assertForbidden();
 });
 
-it('annonce un planning en brouillon quand la fenetre est ouverte', function () {
+it('annonce un planning non valide quand la fenetre est ouverte', function () {
     $edition = Edition::factory()->create();
 
     $this->actingAs(User::factory()->forEdition($edition)->create())
         ->get('/dashboard')
-        ->assertSee('Brouillon')
+        ->assertSee('Non validé')
+        ->assertDontSee('Brouillon')
         ->assertDontSee('consultation seule');
 });
 
