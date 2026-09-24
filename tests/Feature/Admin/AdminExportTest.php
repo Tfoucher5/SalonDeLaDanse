@@ -243,32 +243,50 @@ it('rend une feuille en-tetes seuls quand aucune ligne ne correspond', function 
 });
 
 it('refuse une feuille ou un format inconnus', function () {
-    $this->actingAs($this->admin)->get('/admin/exports/plannings/csv')->assertNotFound();
-    $this->actingAs($this->admin)->get('/admin/exports/planning/pdf')->assertNotFound();
+    telecharge('plannings', 'csv')->assertInvalid(['dataset']);
+    telecharge('planning', 'pdf')->assertInvalid(['format']);
 });
 
 it('ferme les exports a tout le monde sauf a l administrateur', function () {
-    $this->get(route('admin.exports.index'))->assertRedirect('/login');
+    $this->get(route('admin.exports.download', ['dataset' => 'contacts', 'format' => 'csv']))->assertRedirect('/login');
 
-    $this->actingAs($this->camille)->get(route('admin.exports.index'))->assertForbidden();
     $this->actingAs($this->camille)->get(route('admin.exports.download', ['dataset' => 'contacts', 'format' => 'csv']))
         ->assertForbidden();
 });
 
-it('mene de la recherche a l export en conservant les criteres', function () {
-    $this->actingAs($this->admin)
-        ->get(route('admin.volunteers.index', ['name' => 'Dorel']))
-        ->assertOk()
-        ->assertSee(route('admin.exports.index', ['name' => 'Dorel']), escape: false);
+it('ne sort du planning general que les creneaux du filtre, pas tout le planning des benevoles retenus', function () {
+    // Camille prend aussi la Billetterie le samedi : filtrer sur l'Accueil ou
+    // sur le vendredi la retient, mais ne doit pas ramener ce créneau-là.
+    Assignment::factory()->create(['user_id' => $this->camille->id, 'shift_id' => $this->billetterie->id]);
 
+    expect(csv('planning', ['mission' => $this->accueil->mission_id]))
+        ->toContain('Accueil exposants')->not->toContain('Billetterie');
+
+    expect(csv('planning', ['day' => '2027-05-14']))
+        ->toContain('2027-05-14')->not->toContain('2027-05-15');
+});
+
+it('exporte la liste des benevoles depuis sa fenetre, criteres repris', function () {
     $this->actingAs($this->admin)
-        ->get(route('admin.exports.index', ['name' => 'Dorel']))
+        ->get(route('admin.volunteers.index', ['name' => 'Dorel', 'status' => 'validated']))
         ->assertOk()
-        ->assertSee('Planning général')
-        ->assertSee('Liste par mission')
-        ->assertSee('Fiches contact')
-        ->assertSee(route('admin.exports.download', ['dataset' => 'planning', 'format' => 'xlsx', 'name' => 'Dorel']), escape: false)
-        // La feuille par mission ne porte pas le critère qu'elle ignore.
-        ->assertSee(route('admin.exports.download', ['dataset' => 'missions', 'format' => 'csv']), escape: false)
-        ->assertSee('Cette feuille ignore');
+        ->assertSee('Exporter cette vue')
+        ->assertSee('action="'.route('admin.exports.download').'"', escape: false)
+        ->assertSee('<input type="hidden" name="name" value="Dorel">', escape: false)
+        ->assertSee('<input type="hidden" name="status" value="validated">', escape: false)
+        ->assertSee('Nom : « Dorel »')
+        ->assertSeeInOrder(['Fiches contact', 'Planning général'])
+        ->assertDontSee('Liste par mission');
+});
+
+it('exporte le planning du jour affiche depuis sa fenetre', function () {
+    // Sans jour dans l'URL, l'écran montre le premier : l'export aussi.
+    $this->actingAs($this->admin)
+        ->get(route('admin.planning', ['mission' => $this->accueil->mission_id]))
+        ->assertOk()
+        ->assertSee('<input type="hidden" name="mission" value="'.$this->accueil->mission_id.'">', escape: false)
+        ->assertSee('Mission : Accueil exposants')
+        ->assertSee('name="day" value="2027-05-14" checked', escape: false)
+        ->assertSee('Tous les jours')
+        ->assertSeeInOrder(['Liste par mission', 'Planning général']);
 });

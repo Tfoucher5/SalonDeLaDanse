@@ -90,10 +90,9 @@ Route::middleware(['auth', 'verified', 'can:admin'])
         Route::delete('/volunteers/{volunteer}/shifts/{shift}', [AdminVolunteerPlanningController::class, 'destroy'])
             ->name('volunteers.shifts.destroy');
 
-        // Exports. Feuille et format sont des enumerations liees par la route :
-        // une valeur inconnue rend un 404 avant d atteindre le controleur.
-        Route::get('/exports', [AdminExportController::class, 'index'])->name('exports.index');
-        Route::get('/exports/{dataset}/{format}', [AdminExportController::class, 'download'])->name('exports.download');
+        // Exports. Pas d ecran dedie : la fenetre d export de chaque page
+        // soumet ici ses criteres, la feuille et le format.
+        Route::get('/exports', [AdminExportController::class, 'download'])->name('exports.download');
     });
 
 // La planche de la charte graphique est un outil de travail : elle n existe

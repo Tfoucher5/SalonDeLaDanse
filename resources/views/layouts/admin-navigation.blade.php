@@ -17,10 +17,7 @@
         ['label' => 'Bénévoles', 'short' => 'Bénévoles', 'route' => 'admin.volunteers.index', 'active' => request()->routeIs('admin.volunteers.*'),
             'icon' => 'M9 11a4 4 0 100-8 4 4 0 000 8zm-6 10a6 6 0 0112 0m2-10a3 3 0 100-6m4 16a5 5 0 00-4-4.9'],
         ['label' => 'Missions', 'short' => 'Missions', 'route' => 'admin.missions.index', 'active' => request()->routeIs('admin.missions.*'),
-            'icon' => 'M9 5h6M9 3h6a1 1 0 011 1v1h2a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V6a1 1 0 011-1h2V4a1 1 0 011-1zm0 10l2 2 4-4'],
-        ['label' => 'Exports', 'short' => 'Exports', 'route' => 'admin.exports.index', 'active' => request()->routeIs('admin.exports.*'),
-            'icon' => 'M12 4v11m0 0l-4-4m4 4l4-4M5 20h14'],
-    ];
+            'icon' => 'M9 5h6M9 3h6a1 1 0 011 1v1h2a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V6a1 1 0 011-1h2V4a1 1 0 011-1zm0 10l2 2 4-4'],    ];
 @endphp
 
 <nav class="vt-site-nav sticky top-0 z-40 border-b border-zinc-900/5 bg-white/85 backdrop-blur-md print-hidden" aria-label="Navigation du back-office">
@@ -79,10 +76,10 @@
     </x-ui.container>
 </nav>
 
-{{-- Barre d'onglets mobile : cinq destinations, cibles tactiles de 56 px. --}}
+{{-- Barre d'onglets mobile : quatre destinations, cibles tactiles de 56 px. --}}
 <nav class="vt-tab-bar fixed inset-x-0 bottom-0 z-40 border-t border-zinc-900/5 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden print-hidden"
      aria-label="Navigation mobile du back-office">
-    <div class="mx-auto grid max-w-lg grid-cols-5 gap-1 px-2 py-1.5">
+    <div class="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 py-1.5">
         @foreach ($sections as $section)
             <a href="{{ route($section['route']) }}"
                @if ($section['active']) aria-current="page" @endif

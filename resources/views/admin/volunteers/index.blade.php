@@ -1,3 +1,4 @@
+@use('App\Enums\ExportDataset')
 @use('App\Enums\PlanningState')
 @use('App\Enums\StaffingLevel')
 
@@ -26,20 +27,18 @@
         {{-- Zone rejouee par le filtrage sans clic. Son identifiant est le
              contrat avec `liveFilters`. --}}
         <div id="resultats-benevoles" class="space-y-4" aria-live="polite">
-        {{-- Dans la zone rejouee : le lien d'export suit ainsi les criteres
-             saisis, sans rechargement. --}}
+        {{-- Dans la zone rejouee : l'export suit ainsi les criteres saisis,
+             sans rechargement. --}}
         <div class="flex flex-wrap items-center justify-between gap-3">
             <p class="tabular-grid text-sm font-semibold text-zinc-500">
                 {{ $volunteers->total() }} bénévole{{ $volunteers->total() > 1 ? 's' : '' }}
                 {{ collect($criteria)->filter()->isNotEmpty() ? 'pour cette recherche' : 'inscrits' }}
             </p>
 
-            <x-ui.button :href="route('admin.exports.index', array_filter($criteria))" variant="ghost">
-                <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v7.6l2.3-2.3a1 1 0 111.4 1.4l-4 4a1 1 0 01-1.4 0l-4-4a1 1 0 111.4-1.4L9 11.6V4a1 1 0 011-1zM4 15a1 1 0 011 1v1h10v-1a1 1 0 112 0v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2a1 1 0 011-1z" clip-rule="evenodd" />
-                </svg>
-                Exporter ces résultats
-            </x-ui.button>
+            <x-admin.export-dialog
+                :datasets="[ExportDataset::Contacts, ExportDataset::Planning]"
+                :criteria="$criteria"
+                :missions="$missions" />
         </div>
 
         @if ($volunteers->isEmpty())
