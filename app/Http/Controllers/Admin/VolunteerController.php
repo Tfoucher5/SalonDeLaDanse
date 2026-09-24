@@ -9,6 +9,7 @@ use App\Http\Requests\Admin\VolunteerSearchRequest;
 use App\Models\Edition;
 use App\Models\Shift;
 use App\Models\User;
+use App\Services\Badges\BadgePrinter;
 use App\Services\VolunteerAccount;
 use App\Services\VolunteerSearch;
 use Illuminate\Contracts\View\View;
@@ -27,6 +28,7 @@ class VolunteerController extends Controller
     public function __construct(
         private readonly VolunteerSearch $search,
         private readonly VolunteerAccount $accounts,
+        private readonly BadgePrinter $badges,
     ) {}
 
     /**
@@ -59,6 +61,7 @@ class VolunteerController extends Controller
     {
         $edition = $volunteer->activeEdition();
         $shiftsByDay = $this->shiftsByDay($volunteer);
+        $currentEdition = Edition::current();
 
         return view('admin.volunteers.show', [
             'volunteer' => $volunteer,
@@ -66,6 +69,9 @@ class VolunteerController extends Controller
             'state' => PlanningState::for($volunteer, $edition),
             'shiftsByDay' => $shiftsByDay,
             'assignableShifts' => $this->assignableShifts($edition, $volunteer),
+            // Le bouton du badge ne s'affiche que s'il mène à un PDF : un
+            // compte hors de l'édition courante n'en a pas.
+            'hasBadge' => $currentEdition !== null && $this->badges->isActiveVolunteer($volunteer, $currentEdition),
         ]);
     }
 

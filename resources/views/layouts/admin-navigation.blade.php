@@ -17,7 +17,10 @@
         ['label' => 'Bénévoles', 'short' => 'Bénévoles', 'route' => 'admin.volunteers.index', 'active' => request()->routeIs('admin.volunteers.*'),
             'icon' => 'M9 11a4 4 0 100-8 4 4 0 000 8zm-6 10a6 6 0 0112 0m2-10a3 3 0 100-6m4 16a5 5 0 00-4-4.9'],
         ['label' => 'Missions', 'short' => 'Missions', 'route' => 'admin.missions.index', 'active' => request()->routeIs('admin.missions.*'),
-            'icon' => 'M9 5h6M9 3h6a1 1 0 011 1v1h2a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V6a1 1 0 011-1h2V4a1 1 0 011-1zm0 10l2 2 4-4'],    ];
+            'icon' => 'M9 5h6M9 3h6a1 1 0 011 1v1h2a1 1 0 011 1v14a1 1 0 01-1 1H6a1 1 0 01-1-1V6a1 1 0 011-1h2V4a1 1 0 011-1zm0 10l2 2 4-4'],
+        ['label' => 'Badges', 'short' => 'Badges', 'route' => 'admin.badges.index', 'active' => request()->routeIs('admin.badges.*'),
+            'icon' => 'M4 6a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V6zm5 5a2 2 0 100-4 2 2 0 000 4zm-3 5a3 3 0 016 0m3-7h3m-3 4h3'],
+    ];
 @endphp
 
 <nav class="vt-site-nav sticky top-0 z-40 border-b border-zinc-900/5 bg-white/85 backdrop-blur-md print-hidden" aria-label="Navigation du back-office">
@@ -33,7 +36,18 @@
                 @endforeach
             </div>
 
-            <div class="flex justify-end">
+            <div class="flex items-center justify-end gap-1">
+                {{-- Le scanner reste a portee de pouce sur tous les ecrans,
+                     telephone compris : c'est l'outil du jour J. --}}
+                <button type="button" x-data x-on:click="$dispatch('open-modal', 'badge-scanner')"
+                        class="inline-flex h-11 min-h-touch items-center gap-2 rounded-xl px-3 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100">
+                    <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 8V5a1 1 0 011-1h3m8 0h3a1 1 0 011 1v3m0 8v3a1 1 0 01-1 1h-3m-8 0H5a1 1 0 01-1-1v-3M8 8h3v3H8V8zm5 0h3v3h-3V8zm-5 5h3v3H8v-3zm5 3h3" />
+                    </svg>
+                    <span class="hidden sm:inline">Scanner</span>
+                    <span class="sr-only sm:hidden">Scanner un badge</span>
+                </button>
+
                 <x-dropdown align="right" width="w-60">
                     <x-slot name="trigger">
                         <button type="button" class="inline-flex h-11 min-h-touch items-center gap-2 rounded-xl py-1 pe-2 ps-1 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100">
@@ -76,10 +90,10 @@
     </x-ui.container>
 </nav>
 
-{{-- Barre d'onglets mobile : quatre destinations, cibles tactiles de 56 px. --}}
+{{-- Barre d'onglets mobile : cinq destinations, cibles tactiles de 56 px. --}}
 <nav class="vt-tab-bar fixed inset-x-0 bottom-0 z-40 border-t border-zinc-900/5 bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-md md:hidden print-hidden"
      aria-label="Navigation mobile du back-office">
-    <div class="mx-auto grid max-w-lg grid-cols-4 gap-1 px-2 py-1.5">
+    <div class="mx-auto grid max-w-lg grid-cols-5 gap-1 px-2 py-1.5">
         @foreach ($sections as $section)
             <a href="{{ route($section['route']) }}"
                @if ($section['active']) aria-current="page" @endif

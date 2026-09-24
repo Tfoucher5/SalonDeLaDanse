@@ -14,6 +14,15 @@
                     <x-ui.badge :tone="$state->adminTone()" dot>{{ $state->adminLabel() }}</x-ui.badge>
                 </div>
 
+                @if ($hasBadge)
+                    <x-ui.button :href="route('admin.volunteers.badge', $volunteer)" size="touch">
+                        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v7.6l2.3-2.3a1 1 0 111.4 1.4l-4 4a1 1 0 01-1.4 0l-4-4a1 1 0 111.4-1.4L9 11.6V4a1 1 0 011-1zM4 15a1 1 0 011 1v1h10v-1a1 1 0 112 0v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        Badge (PDF)
+                    </x-ui.button>
+                @endif
+
                 <x-ui.button :href="route('admin.volunteers.edit', $volunteer)" size="touch">
                     Modifier la fiche
                 </x-ui.button>
