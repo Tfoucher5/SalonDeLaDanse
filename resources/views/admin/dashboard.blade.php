@@ -21,75 +21,118 @@
             Les compteurs s'afficheront ici dès qu'une édition du Salon sera ouverte.
         </x-ui.empty>
     @else
-        {{-- Le bandeau de tete, sur le modele de « Mes creneaux » cote
-             benevole : l'anneau dit le remplissage global, les tuiles le
-             dispositif humain. Chaque tuile mene a la liste qu'elle resume. --}}
-        @php $globalStaffing = StaffingLevel::fromCounts($fillRate['taken'], $fillRate['capacity']); @endphp
+        {{-- Le bandeau de tete (maquette « Vue d'ensemble Admin ») : l'anneau
+             dit le remplissage global, les cartes le dispositif humain. Toutes
+             suivent l'echelle continue de pourvoi : plus c'est plein, plus
+             c'est vert. Chaque carte mene a la liste qu'elle resume. --}}
+        @php
+            $accountsRate = $headcount['expected'] > 0 ? (int) round($headcount['accounts'] / $headcount['expected'] * 100) : 0;
+            $validatedRate = $headcount['accounts'] > 0 ? (int) round($headcount['validated'] / $headcount['accounts'] * 100) : 0;
+        @endphp
 
-        <section class="relative overflow-hidden rounded-3xl bg-white p-5 shadow-card ring-1 ring-zinc-900/5 sm:p-6" aria-labelledby="remplissage-global">
-            <div class="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-primary-soft blur-2xl" aria-hidden="true"></div>
-            <div class="pointer-events-none absolute -bottom-12 -left-12 h-56 w-56 rounded-full bg-gauge-free/10 blur-2xl" aria-hidden="true"></div>
+        <div class="grid gap-4 sm:gap-5 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]">
+            <section class="staffing-scale relative flex items-center overflow-hidden rounded-3xl bg-white p-5 shadow-card ring-1 ring-zinc-900/5 sm:p-6"
+                     style="--fill: {{ min(100, $fillRate['rate']) }}"
+                     aria-labelledby="remplissage-global">
+                <div class="pointer-events-none absolute -right-16 -top-16 h-64 w-64 rounded-full bg-primary-soft blur-2xl" aria-hidden="true"></div>
+                <div class="pointer-events-none absolute -bottom-12 -left-12 h-56 w-56 rounded-full bg-gauge-free/10 blur-2xl" aria-hidden="true"></div>
 
-            <div class="relative grid gap-6 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:items-center">
-                <div class="flex items-center gap-4 sm:gap-6">
-                    <div class="relative flex h-28 w-28 shrink-0 items-center justify-center rounded-2xl bg-zinc-50">
-                        <svg class="h-24 w-24 -rotate-90" viewBox="0 0 36 36" aria-hidden="true">
-                            <circle cx="18" cy="18" r="15.9155" fill="none" stroke-width="3.5" class="stroke-zinc-200" />
-                            <circle cx="18" cy="18" r="15.9155" fill="none" stroke-width="3.5" stroke-linecap="round"
-                                    class="progress-ring {{ $globalStaffing->strokeClass() }}" stroke-dasharray="{{ min(100, $fillRate['rate']) }}, 100" />
+                <div class="relative flex w-full flex-col items-center gap-5 text-center sm:flex-row sm:text-left">
+                    <div class="relative flex h-36 w-36 shrink-0 items-center justify-center">
+                        <svg class="h-36 w-36 -rotate-90" viewBox="0 0 36 36" aria-hidden="true">
+                            <circle cx="18" cy="18" r="15.9155" fill="none" stroke-width="3" class="stroke-zinc-200" />
+                            <circle cx="18" cy="18" r="15.9155" fill="none" stroke-width="3" stroke-linecap="round"
+                                    class="progress-ring stroke-staffing" stroke-dasharray="{{ min(100, $fillRate['rate']) }}, 100" />
                         </svg>
                         <div class="absolute inset-0 flex flex-col items-center justify-center tabular-grid">
-                            <span class="text-2xl font-extrabold leading-none {{ $globalStaffing->textClass() }}">{{ $fillRate['rate'] }} %</span>
-                            <span class="mt-1 text-[0.625rem] font-bold uppercase tracking-[0.08em] text-zinc-500">Rempli</span>
+                            <span class="text-3xl font-extrabold leading-none tracking-tight text-zinc-900">{{ $fillRate['rate'] }} %</span>
+                            <span class="mt-1 text-[0.625rem] font-bold uppercase tracking-[0.08em] text-staffing">Rempli</span>
                         </div>
                     </div>
 
-                    <div class="min-w-0 space-y-1.5">
+                    <div class="min-w-0 space-y-2">
                         <h2 id="remplissage-global" class="text-[0.6875rem] font-bold uppercase tracking-[0.08em] text-primary">
                             Remplissage global
                         </h2>
 
-                        <p class="tabular-grid text-[0.9375rem] text-zinc-900">
-                            <strong class="font-bold">{{ $fillRate['rate'] }} % de remplissage</strong> :
+                        <p class="tabular-grid text-xl font-bold tracking-tight text-zinc-900">
                             {{ $fillRate['taken'] }} place{{ $fillRate['taken'] > 1 ? 's' : '' }} prise{{ $fillRate['taken'] > 1 ? 's' : '' }}
-                            sur {{ $fillRate['capacity'] }} offertes.
+                            <span class="font-medium text-zinc-500">/ {{ $fillRate['capacity'] }}</span>
                         </p>
 
                         <p class="text-sm text-zinc-500">
-                            Encore {{ $fillRate['remaining'] }} place{{ $fillRate['remaining'] > 1 ? 's' : '' }} à pourvoir, missions restreintes comprises.
+                            Encore <strong class="font-bold text-zinc-900">{{ $fillRate['remaining'] }} place{{ $fillRate['remaining'] > 1 ? 's' : '' }}</strong>
+                            à pourvoir sur {{ $byDay->count() }} jour{{ $byDay->count() > 1 ? 's' : '' }}, missions restreintes comprises.
                         </p>
+
+                        <span class="bg-staffing-soft inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold text-staffing">
+                            <span class="bg-staffing h-1.5 w-1.5 rounded-full" aria-hidden="true"></span>
+                            {{ StaffingLevel::fromCounts($fillRate['taken'], $fillRate['capacity'])->label() }}
+                        </span>
                     </div>
                 </div>
+            </section>
 
-                <div class="grid grid-cols-2 gap-3">
-                    <x-ui.stat
-                        label="Bénévoles attendus"
-                        :value="$headcount['expected']"
-                        :hint="$headcount['codes_left'].' code'.($headcount['codes_left'] > 1 ? 's' : '').' encore disponible'.($headcount['codes_left'] > 1 ? 's' : '')" />
+            <div class="grid gap-4 sm:grid-cols-2 sm:gap-5">
+                <x-admin.kpi
+                    label="Bénévoles attendus"
+                    :value="$headcount['expected']"
+                    unit="objectif cible"
+                    detail-label="Codes d'invitation"
+                    :detail-value="$headcount['codes_left'].' disponible'.($headcount['codes_left'] > 1 ? 's' : '')">
+                    <x-slot name="icon">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17 20v-1a4 4 0 00-4-4H7a4 4 0 00-4 4v1m18 0v-1a4 4 0 00-3-3.87M14 4.13a4 4 0 010 7.75M14 8a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </x-slot>
+                </x-admin.kpi>
 
-                    <x-ui.stat
-                        label="Comptes créés"
-                        :value="$headcount['accounts']"
-                        :target="$headcount['expected']"
-                        :hint="'sur '.$headcount['expected'].' attendus'"
-                        :href="route('admin.volunteers.index')" />
+                <x-admin.kpi
+                    label="Comptes créés"
+                    :value="$headcount['accounts']"
+                    :unit="$accountsRate.' % de l\'effectif'"
+                    :rate="$accountsRate"
+                    bar
+                    :hint="'sur '.$headcount['expected'].' attendus'"
+                    :href="route('admin.volunteers.index')">
+                    <x-slot name="icon">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M15 19v-1a4 4 0 00-4-4H6a4 4 0 00-4 4v1m15-8l2 2 4-4M12.5 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                    </x-slot>
+                </x-admin.kpi>
 
-                    <x-ui.stat
-                        label="Plannings validés"
-                        :value="$headcount['validated']"
-                        :target="$headcount['accounts']"
-                        :hint="'sur '.$headcount['accounts'].' comptes créés'"
-                        :href="route('admin.volunteers.index', ['status' => 'validated'])" />
+                <x-admin.kpi
+                    label="Plannings validés"
+                    :value="$headcount['validated']"
+                    unit="bénévoles figés"
+                    :rate="$validatedRate"
+                    detail-label="Taux de validation"
+                    :detail-value="$validatedRate.' % des comptes'"
+                    :href="route('admin.volunteers.index', ['status' => 'validated'])">
+                    <x-slot name="icon">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                    </x-slot>
+                </x-admin.kpi>
 
-                    <x-ui.stat
-                        label="Plannings non validés"
-                        :value="$headcount['pending']"
-                        :level="$headcount['pending'] > 0 ? StaffingLevel::Critical : StaffingLevel::Staffed"
-                        hint="comptes créés, planning non figé"
-                        :href="route('admin.volunteers.index', ['status' => 'pending'])" />
-                </div>
+                <x-admin.kpi
+                    label="Plannings non validés"
+                    :value="$headcount['pending']"
+                    unit="comptes non figés"
+                    :tone="$headcount['pending'] > 0 ? 'danger' : 'free'"
+                    :detail-label="$headcount['pending'] > 0 ? 'Relance recommandée' : 'Tous les plannings sont figés'"
+                    :detail-value="$headcount['pending'] > 0 ? 'Voir la liste' : ''"
+                    :href="route('admin.volunteers.index', ['status' => 'pending'])">
+                    <x-slot name="icon">
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7 3v3m10-3v3M4 9h16M5 5h14a1 1 0 011 1v13a1 1 0 01-1 1H5a1 1 0 01-1-1V6a1 1 0 011-1zm7 7v3l2 1" />
+                        </svg>
+                    </x-slot>
+                </x-admin.kpi>
             </div>
-        </section>
+        </div>
 
         <div class="grid items-start gap-5 sm:gap-6 lg:grid-cols-2">
             <x-ui.card title="Par jour" kicker="Remplissage" subtitle="Ouvrez une journée pour voir qui est inscrit où.">
@@ -124,7 +167,7 @@
 
                                         <x-ui.gauge
                                             class="mt-1"
-                                            :level="StaffingLevel::fromCounts($row['taken'], $row['capacity'])->tone()"
+                                            level="scale"
                                             :label="$row['rate'].' % de remplissage'"
                                             :remaining="$row['remaining']"
                                             :capacity="$row['capacity']" />
@@ -167,7 +210,7 @@
 
                                     <x-ui.gauge
                                         class="mt-1"
-                                        :level="StaffingLevel::fromCounts($row['taken'], $row['capacity'])->tone()"
+                                        level="scale"
                                         :label="$row['rate'].' % de remplissage'"
                                         :remaining="$row['remaining']"
                                         :capacity="$row['capacity']" />

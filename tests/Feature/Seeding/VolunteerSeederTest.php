@@ -1,9 +1,12 @@
 <?php
 
+use App\Enums\StaffingLevel;
 use App\Models\Assignment;
 use App\Models\Edition;
 use App\Models\InvitationCode;
+use App\Models\Mission;
 use App\Models\User;
+use App\Services\EditionOverview;
 use Database\Seeders\DatabaseSeeder;
 use Database\Seeders\VolunteerSeeder;
 use Illuminate\Support\Facades\Http;
@@ -47,8 +50,9 @@ it('respecte le quota maximum, les chevauchements et les missions restreintes', 
     $this->volunteers->each(function (User $volunteer) use ($maximum): void {
         $shifts = $volunteer->shifts;
 
+        // Seule l'equipe organisatrice place quelqu'un sur une mission restreinte.
         expect($shifts->count())->toBeLessThanOrEqual($maximum)
-            ->and($shifts->every(fn ($shift): bool => $shift->mission->is_public))->toBeTrue();
+            ->and($shifts->every(fn ($shift): bool => $shift->mission->is_public || $shift->pivot->assigned_by_admin))->toBeTrue();
 
         $slotsPerDay = $shifts->groupBy(fn ($shift): string => $shift->date->toDateString());
 
@@ -100,4 +104,27 @@ it('cree le benevole sans photo quand le service de portraits ne repond pas', fu
     $this->seed(VolunteerSeeder::class);
 
     expect(User::query()->where('email', 'like', '%@'.VolunteerSeeder::EMAIL_DOMAIN)->latest('id')->first()->photo_path)->toBeNull();
+});
+
+it('remplit les missions de facon inegale pour montrer toutes les jauges', function () {
+    config()->set('salon.seed.volunteers', 150);
+    $this->seed(VolunteerSeeder::class);
+
+    $levels = app(EditionOverview::class)->fillRateByMission(Edition::current())
+        ->reject(fn (array $row): bool => $row['restricted'])
+        ->map(fn (array $row): StaffingLevel => StaffingLevel::fromCounts($row['taken'], $row['capacity']))
+        ->unique()
+        ->values();
+
+    expect($levels)->toContain(StaffingLevel::Staffed, StaffingLevel::Partial, StaffingLevel::Critical);
+});
+
+it('attribue d office une mission restreinte et en laisse une vide', function () {
+    [$billetterie, $caisse] = Mission::query()->where('is_public', false)->orderBy('position')->get()->all();
+
+    $forced = Assignment::query()->whereHas('shift', fn ($query) => $query->where('mission_id', $billetterie->id))->get();
+
+    expect($forced)->not->toBeEmpty()
+        ->and($forced->every(fn (Assignment $assignment): bool => $assignment->assigned_by_admin))->toBeTrue()
+        ->and(Assignment::query()->whereHas('shift', fn ($query) => $query->where('mission_id', $caisse->id))->exists())->toBeFalse();
 });
