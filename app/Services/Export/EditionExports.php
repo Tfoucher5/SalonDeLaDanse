@@ -10,6 +10,8 @@ use App\Models\Shift;
 use App\Models\User;
 use App\Services\EditionPlanning;
 use App\Services\VolunteerSearch;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -169,12 +171,19 @@ class EditionExports
     /**
      * Les bénévoles retenus, planning chargé d'un coup.
      *
+     * La mission et le jour filtrent aussi les créneaux chargés, pas seulement
+     * les bénévoles : filtrer sur l'Accueil ne doit pas ramener les autres
+     * créneaux de ceux qui y sont inscrits.
+     *
      * @return Collection<int, User>
      */
     private function volunteersWithShifts(Edition $edition, array $criteria): Collection
     {
         return $this->search->query($edition, $criteria)
             ->with([
+                'shifts' => fn (BelongsToMany $shifts) => $shifts
+                    ->when($criteria['mission'], fn (Builder $query, int $mission) => $query->where('shifts.mission_id', $mission))
+                    ->when($criteria['day'], fn (Builder $query, string $day) => $query->where('shifts.date', $day)),
                 'shifts.mission:id,name,is_public,is_active,position',
                 'shifts.timeSlot:id,starts_at,ends_at,position',
             ])

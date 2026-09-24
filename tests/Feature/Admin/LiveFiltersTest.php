@@ -22,7 +22,6 @@ function ecransFiltres(): array
 {
     return [
         route('admin.volunteers.index'),
-        route('admin.exports.index'),
         route('admin.planning'),
     ];
 }
