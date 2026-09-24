@@ -14,7 +14,6 @@ function routesDuBackOffice(): array
         route('admin.dashboard'),
         route('admin.planning'),
         route('admin.volunteers.index'),
-        route('admin.exports.index'),
     ];
 }
 
@@ -130,11 +129,6 @@ it('reste consultable sans aucune edition en base', function () {
 
     $this->actingAs(administrateur())
         ->get(route('admin.planning'))
-        ->assertOk()
-        ->assertSee('Aucune édition active');
-
-    $this->actingAs(administrateur())
-        ->get(route('admin.exports.index'))
         ->assertOk()
         ->assertSee('Aucune édition active');
 
